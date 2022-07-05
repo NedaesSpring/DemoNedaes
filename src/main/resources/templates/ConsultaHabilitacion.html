@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport">
+<title>HABILITACIONES</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<link th:href="@{/css/style-magrama-rwd.css}" rel="stylesheet" />
+<link th:href="@{/css/estilo.css}" rel="stylesheet" />
+
+</head>
+
+<body>
+
+<script th:inline="javascript">
+function CargarLocalidades() {	
+	$("#localid").load("/nedaes/ListarLocalidProvinc",  $("#provinc").serialize());
+}
+
+function CargarSucursales() {	
+	$("#sucurba").load("/nedaes/ListarSucurbaBanco",  $("#banco").serialize());
+}
+</script>
+
+<!-- Header -->
+	<div th:replace="Header.html :: header"></div>
+
+	<!-- End Header -->
+
+	<!-- Container -->
+	<div class="container">
+		<!-- contenido de la página -->
+		<div class="col-md-12">
+			<div class="row clearfix">
+				<div class="migas">
+					<ul>
+						<li xmlns:myobj="mgm:component-link"><a
+							href="https://portal.mineco.gob.es/">Inicio</a></li>
+						<li><b>Habilitaciones</b></li>						
+					</ul>
+				</div>
+				<div class="col-md-12" id="main">
+					<!-- contenedor principal -->
+					<div class="row row-offcanvas row-offcanvas-left">
+						<div class="col-xs-0 col-sm-3 col-md-3 sidebar-offcanvas"
+							id="sidebar" role="navigation">
+							<div th:replace="Menu.html :: menuNedaes"></div>
+						</div>
+						<!-- /sidebar offcanvas -->
+						<div class="col-xs-12 col-sm-9 col-md-9 contenido">
+							<h2 class="pestana-titulo col-md-9">Habilitaciones</h2>
+
+							<span class="pestana-flecha"></span>
+
+
+							<!-- Fin Barra de herramientas -->
+							<div class="col-md-12 contenido subhome-new">
+
+								<!-- CONTENIDO -->
+								<form th:action="@{/consultaHabilitacion}" th:object="${habilitacion}" enctype="multipart/form-data" name="fHab" id="fHab">
+									<div>
+										<div class="panel">
+											<div class="title-container">
+												<h3 id="ancla0" class="ma-panel-title">Búsqueda</h3>
+											</div>
+											<div class="panel-body">
+												<div class="panel-info container">
+												<input type="hidden" name="idDelhac" id="idDelhac" th:value="${idDelhac}" />
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:value="${cdhabil}" id="cdhabil" name="cdhabil" /> 
+																<label for="cdhabil">CdHabil: </label>
+															</div>
+														</div>
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:value="${dsorg}" id="dsorg" name="dsorg" /> 
+																<label for="dsorg">Dsorg: </label>
+															</div>
+														</div>
+														
+																											
+														 <div class="col-md-4">
+															<div class="form-group">															
+																<select id="delhac" name="delhac" th:field="*{delhac}"	class="user-form-control">
+																	<option th:value="0">--Seleccione DelHac--</option>																	
+																	<option th:each="d : ${delhacs}"
+																		th:value="${d.cddelhac}"
+																		th:attr="selected = (${delhac.getCddelhac()} == ${d.cddelhac})"
+																		th:text="${d.dsdelhac}"/>
+  																</select> <label for="delhac">DelHac: </label>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:value="${dscentro}" id="dscentro" name="dscentro" /> 
+																<label for="dscentro">DsCentro: </label>
+															</div>
+														</div>
+
+  														<div class="col-md-4">
+															<div class="form-group" > 
+ 																<select id="provinc" name="provinc" th:field="*{provinc}" onchange="CargarLocalidades();" class="user-form-control">
+																	<option th:value="0">--Seleccione provincia--</option>
+																	<option th:each="p : ${provincs}"
+																		th:value="${p.cdprov}"
+																		th:attr="selected = (${provinc.getCdprov()} == ${p.cdprov})"
+																		th:text="${p.dsprov}"/>
+																</select> <label for="provinc">Provincia: </label>
+	  														</div>
+														</div>						  							
+														<div class="col-md-4">
+   															<div class="form-group" >  
+																<select id="localid" name="localid" th:field="*{localid}" class="user-form-control">
+																	<option th:value="0">--Seleccione Localidad--</option>
+																	<option th:fragment="fraglocalid" th:each="l : ${localids}"
+																		th:value="${l.idlocalid}"
+																		th:attr="choiceid=${l.idlocalid}"																		
+																		th:text="${l.dsloc}" />
+																</select> <label for="localid">Localid: </label>
+															</div>												
+ 														</div>
+												    </div>
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group" > 
+																<select id="sigdom" name="sigdom" th:field="*{sigdom}"	class="user-form-control">
+																	<option th:value="0">--Seleccione SigDom--</option>
+																	<option th:each="s : ${sigdoms}"
+																		th:value="${s.idsigdom}"
+																		th:attr="selected = (${sigdom.getIdsigdom()} == ${s.idsigdom})"
+																		th:text="${s.dssiglas}" />
+																</select> <label for="sigdom">SigDom: </label>
+															</div>
+  														</div>
+
+			 											<div class="col-md-4">
+															<div class="form-group" >															
+																<select id="banco" name="banco" th:field="*{banco}" onchange="CargarSucursales();" class="user-form-control">
+																	<option th:value="0">--Seleccione Banco--</option>
+																	<option th:each="b : ${bancos}"
+																		th:value="${b.idbanco}"
+																		th:attr="selected = (${banco.getIdbanco()} == ${b.idbanco})"
+																		th:text="${b.dsbanco}"/>
+																</select> <label for="banco">Banco: </label>
+															</div>
+														</div>
+													
+														<div class="col-md-4">
+   															<div class="form-group" >  
+																<select id="sucurba" name="sucurba" th:field="*{sucurba}" class="user-form-control">
+																	<option th:value="0">--Seleccione Sucursal--</option>
+																	<option th:fragment="fragsucurba" th:each="s : ${sucurbas}"
+																		th:value="${s.idsucurba}"
+																		th:attr="choiceid=${s.idsucurba}"																		
+																		th:text="${s.cdsucur}" />
+																</select> <label for="sucurba">Sucursal bancaria: </label>
+															</div>												
+ 														</div>
+													</div>
+													
+													<div class="row">
+														<div class="col-md-8">
+															<div class="form-group" th:if="${mensaje != null}">
+																<label th:text="${mensaje}"></label>
+															</div>
+														</div>
+													</div>
+													<br> <br>
+													<div class="row">
+														<div class="col-md-4 text-center">
+															<div class="form-group">
+																<a type="button" class="btn btn-success"   th:href="@{/habilitacion}">Nuevo</a>
+															</div>
+														</div>
+														<div class="col-md-4 text-center">
+															<div class="form-group">
+																<a type="button" class="btn btn-secondary" th:href="@{/habilitaciones}">Limpiar</a>
+															</div>
+														</div>
+														<div class="col-md-4 text-center">
+															<div class="form-group">
+																<input type="submit" class="btn btn-primary" value="Buscar" 
+																       onclick="document.fHab.action = '/nedaes/consultaHabilitacion/1'; document.fHab.method='get'; document.fHab.submit()" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<br> <br>
+											<div class="panel" th:if="${not #lists.isEmpty(listado)}">
+												<div
+													class="title-container d-md-flex justify-content-between align-items-center mb-3">
+													<h3 class="ma-panel-title">Resultados</h3>
+													<input type="submit" class="btn ma-btn ma-download-btn ma-great-text-btn" value="Exportar CSV"
+														onclick="document.fHab.action = '/nedaes/exportHabilitacion'; document.fHab.method='get'; document.fHab.submit()" />
+												</div>
+
+												<div class="panel-body">
+													<div class="panel-info container">
+														<div class="row">
+															<div class="col-md-12">
+																<div class="table-responsive">
+																	<table class="ma-table table">
+																		<thead>
+																			<tr>
+																				<th>CDHABIL</th>
+																				<th>DSORG</th>
+																				<th>DSCENTRO</th>
+																				<th>PROVINCIA</th>
+	 																			<th>LOCALIDAD</th>
+	 																			<th>SUCURSAL BANCARIA</th>																				
+																				<th>SIGDOM</th>
+											                					<th>BANCO</th>
+																				<th>DELHAC</th>	
+																				<th>Acciones</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr th:each="hab : ${listado}">
+																				<td th:text="${hab.cdhabil}"></td>
+																				<td th:text="${hab.dsorg}"></td>
+																				<td th:text="${hab.dscentro}"></td>
+																				<td th:text="${hab.provinc.dsprov}"></td>
+																				<td th:text="${hab.localid.dsloc}"></td>
+   																				<td th:text="${hab.sucurba.cdsucur}"></td>
+ 																				<td th:text="${hab.sigdom.dssiglas}"></td>
+ 																				<td th:text="${hab.banco.dsbanco}"></td>
+ 																				<td th:text="${hab.delhac.dsdelhac}"></td>
+																				<td>
+																					<ul class="ma-btn-acciones">
+																						<li><a th:href="@{/visualizarHabilitacion?(id=${hab.idHabilitacion})}"	class="ma-btn ma-btn-config"></a></li>
+																						<li><a th:href="@{/editarHabilitacion?(id=${hab.idHabilitacion})}"		class="ma-btn ma-btn-edit"></a></li>
+																						<li><a th:href="@{/borrarHabilitacion?(id=${hab.idHabilitacion})}"		class="ma-btn ma-btn-delete"></a></li>
+																						<li><a th:href="@{/editarHabilitacionPersonal?(id=${hab.idHabilitacion})}"	class="ma-btn ma-btn-personal"></a></li>
+																						<li><a th:href="@{/editarHabilitacionBancaria?(id=${hab.idHabilitacion})}" class="ma-btn ma-btn-bancario"></a></li>
+																						<li><a th:href="@{/editarHabilitacionMutua?(id=${hab.idHabilitacion})}"	class="ma-btn ma-btn-mutua"></a></li>
+																					</ul>
+																				</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- class="table-responsive" -->
+									<div class="d-flex pagination-content"> 
+										<div class="form-group pagination-content_select">		
+											<label for="eppResultados">Elementos/Página: </label> 
+											<select	name="eppResultados" id="eppResultados"	th:value="${eppResultados}"	class="browser-default">
+												<option value="10" th:attr="selected = (10 == ${eppResultados})">10</option>
+												<option value="20" th:attr="selected = (20 == ${eppResultados})">20</option>
+												<option value="50" th:attr="selected = (50 == ${eppResultados})">50</option>
+											</select>
+										</div>
+										<div>Página [[${currentPage}]] de [[${totalPages}]]</div>
+
+										<nav aria-label="Page navigation example" th:if="${totalPages > 1}">
+											<ul class="pagination">
+												<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+													<input type="submit" class="page-link pagination-first" value="|<"                                     th:unless="${currentPage > totalPages}" aria-label="First"
+														onclick="document.fHab.action = '/nedaes/consultaHabilitacion/'+ 1; document.fHab.submit()">
+												</li>
+
+												<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+													<input type="hidden" id="antPage" name="antPage" 		th:if="${currentPage > 1}"	th:value="${currentPage}==null?0: ${currentPage}-1">
+													<input type="submit" class="page-link pagination-prev"	th:if="${currentPage > 1}" value="<"           th:unless="${currentPage > totalPages}" aria-label="Previous"
+														onclick="document.fHab.action = '/nedaes/consultaHabilitacion/' + antPage.value; document.fHab.submit()">
+												</li>
+
+												<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+													<input type="hidden" id="sigPage" name="sigPage" th:value="${currentPage}==null?2: ${currentPage}+1">
+													<input type="submit" class="page-link pagination-next"	th:if="${currentPage < totalPages}" value=">"  th:unless="${currentPage > totalPages}" aria-label="Next"
+														th:onclick="document.fHab.action = '/nedaes/consultaHabilitacion/' + sigPage.value; document.fHab.submit()">
+												</li>
+
+												<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+													<input type="hidden" id="totalPage" name="totalPage"	th:if="${currentPage < totalPages}"	th:value="${totalPages}"> 
+													<input type="submit" class="page-link pagination-last"	th:if="${currentPage < totalPages}" value=">|" th:unless="${currentPage > totalPages}" aria-label="First"
+														onclick="document.fHab.action = '/nedaes/consultaHabilitacion/'+ totalPage.value; document.fHab.submit()">
+												</li>
+											</ul>
+										</nav>
+									</div>
+								</form>
+							</div>
+							<!-- antes del form -->
+						</div>
+						<!-- col med 12 -->
+					</div>
+				</div>
+				<!-- main cierra col-md-9 contenido -->
+			</div>
+			<!-- main cierra row-offcanvas-left -->
+		</div>
+		<!-- main cierra col-md-12 main-->
+	</div>
+	<!-- cierra row -->
+
+	<!-- Cierre containeer -->
+
+	<!-- Footer -->
+	<div th:replace="Footer.html :: pie"></div>
+	<!-- End Footer -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script th:src="@{/js/script.js}"></script>
+	
+	<script th:src="@{/js/jquery.js}"></script>
+	<script th:src="@{/js/jquery-min.js}"></script>
+	<script th:src="@{/js/webjars-requierejs.js}"></script>
+
+</body>
+</html>

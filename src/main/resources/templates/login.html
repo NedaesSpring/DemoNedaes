@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport">
+<title>NEDAES</title>
+<link th:href="@{/css/signin.css}" rel="stylesheet" />	
+<link th:href="@{/css/style-magrama-rwd.css}" rel="stylesheet" />
+<link th:href="@{/css/estilo.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<!-- Header -->
+	<div th:replace="Header2.html :: header"></div>
+
+	<!-- End Header -->
+
+		<div class="container theme-showcase" role="main">
+			<hr class="featurette-divider">
+			<img th:src="@{/img/login.png}" width="136" height="136" class="center">
+			<div class="alert alert-danger" th:if="${param.error}">Nombre de usuario o contraseña incorrectos.</div>
+			<div class="alert alert-success" th:if="${param.logout}">Sesion cerrada correctamente.</div>
+			<form class="form-signin" th:action="@{/login}" method="post">        
+			    <input name="_csrf" type="hidden" value="5f23eb48-3587-4282-8356-28310442483" /> 
+				<h3 class="form-signin-heading text-center">Iniciar Session</h3>        
+				<input type="text" id="username" name="username" class="form-control" placeholder="Usuario" required autofocus>
+				<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+				
+				
+				<select id="habilitacionInicial" name="habilitacionInicial" class="form-control">
+					<option th:value="0">--Seleccione Habilitacion--</option>
+					<option th:each="h : ${habilitaciones}" 
+					            th:value="${h.idHabilitacion}"
+								th:attr="choiceid=${h.idHabilitacion}"
+								th:text="${h.cdhabil}" />
+				</select>
+				
+				
+				<select id="clasenomina" name="clasenomina" class="form-control">
+					<option th:value="0">--Seleccione Clase de Nomina--</option>
+					<option th:each="c : ${clasenominas}" 
+					            th:value="${c.idClasenomina}"
+								th:attr="choiceid=${c.idClasenomina}"
+								th:text="${c.dsclasnm}" />
+				</select>
+				
+				
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+			</form>
+
+		</div> 
+		
+			<!-- Footer -->
+	<div th:replace="Footer.html :: pie"></div>
+	<!-- End Footer -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script th:src="@{/js/script.js}"></script>
+		
+</body>
+</html>

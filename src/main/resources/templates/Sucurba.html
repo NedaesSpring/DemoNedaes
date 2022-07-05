@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport">
+<title>SUCURSALES</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<link th:href="@{/css/style-magrama-rwd.css}" rel="stylesheet" />
+<link th:href="@{/css/estilo.css}" rel="stylesheet" />
+</head>
+
+<body>
+	<!-- Header -->
+	<div th:replace="Header.html :: header"></div>
+
+	<!-- End Header -->
+
+	<!-- Container -->
+	<div class="container">
+		<!-- contenido de la página -->
+		<div class="col-md-12">
+			<div class="row clearfix">
+				<div class="migas">
+					<ul>
+						<li xmlns:myobj="mgm:component-link"><a
+							href="https://portal.mineco.gob.es/">Inicio</a></li>
+						<li><b>Provincias</b></li>
+					</ul>
+				</div>
+				<div class="col-md-12" id="main">
+					<!-- contenedor principal -->
+					<div class="row row-offcanvas row-offcanvas-left">
+						<div class="col-xs-0 col-sm-3 col-md-3 sidebar-offcanvas"
+							id="sidebar" role="navigation">
+							<div th:replace="Menu.html :: menuNedaes"></div>
+						</div>
+						<!-- /sidebar offcanvas -->
+						<div class="col-xs-12 col-sm-9 col-md-9 contenido">
+							<h2 class="pestana-titulo col-md-9">Sucursales</h2>
+
+							<span class="pestana-flecha"></span>
+
+
+							<!-- Fin Barra de herramientas -->
+							<div class="col-md-12 contenido subhome-new">
+
+					<!-- CONTENIDO -->
+					<div>
+					  	<div class="panel">
+							<div class="title-container" th:if="${aniadir == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Añadir</h3>			
+							</div>
+							<div class="title-container" th:if="${editar == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Modificar</h3>			
+							</div>
+							<div class="title-container" th:if="${consultar == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Consultar</h3>			
+							</div>
+							<form th:action="@{/insertarModificarSucurba}" enctype="multipart/form-data" th:object="${sucurba}" id="sucurba" name="sucurba">
+								<input type="hidden" name="idsucurba" id="idsucurba" th:field="*{idsucurba}" />
+								<div class="panel-body">
+									<!-- Consultar -->
+									<div class="panel-info container" th:if="${consultar == 'si'}">
+										<div class="row">
+											<div class="col-md-4">
+											<!-- Ent. Bancaria y Codigo de banco?? -->
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdbanco}" disabled/>
+													<label for="cdbanco">Código de banco: </label>
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+											<!-- Ent. Bancaria y Codigo de banco?? -->
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{banco.dsbanco}" disabled/>
+													<label for="dsbanco">Entidad bancaria: </label>
+												</div>
+											</div>
+										</div>	
+										<div class="row">	
+											<!-- Sucursal -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdsucur}" disabled/>
+													<label for="cdsucur">Sucursal: </label>
+												</div>
+											</div>
+											
+											<!-- BIC :-->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdbic}" disabled/>
+													<label for="cdbic">Bic: </label>
+												</div>
+											</div>
+											
+											<!-- Domicilio : -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsdomic}" disabled/>
+													<label for="dsdomic">Domicilio: </label>
+												</div>
+											</div>
+
+											<!-- Localidad : -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsplaza}" disabled/>
+													<label for="dsplaza">Localidad: </label>
+												</div>
+											</div>
+											<!-- Provincia : -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdprov}" disabled/>
+													<label for="cdprov">Provincia: </label>
+												</div>
+											</div>
+											<!-- Nacion: -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdnacion}" disabled/>
+													<label for="cdnacion">Nación: </label>
+												</div>
+											</div>
+											<!-- Informacion adicional: -->
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsresto}" disabled/>
+													<label for="dsresto">Información adicional: </label>
+												</div>
+											</div>
+										</div>
+										<br>
+										
+										<div class="row">
+											<div >
+												<div class="form-group">
+													<a th:href="@{bancos}" class="btn btn-primary">Volver</a>  
+												</div>
+											</div>
+										</div>
+									</div> <!-- Consultar -->
+									
+									<!-- Añadir o Editar -->
+									<div class="panel-info container" th:unless="${consultar == 'si'}"><!-- consultar = no -->
+								        <div class="row" >
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdbanco}" id="cdbanco" name="cdbanco"  maxlength="4" disabled />
+													<label for="cdbanco">Código de banco: * </label>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{banco.dsbanco}" id="dsbanco" name="dsbanco" maxlength="35" disabled />
+													<label for="dsbanco">Entidad Bancaria: *</label>
+												</div>
+											</div>
+											<!-- Objeto Completo Banco oculto pero necesario para el update -->
+ 										    <div class="col-md-4">											
+												<div class="form-group" th:if="${banco == null}"  style="visibility:hidden;">
+													<select id="banco" name="banco" th:field="*{banco}"class="user-form-control">
+														<option th:value="0">--Seleccione Banco--</option>
+														<option th:each="b : ${bancos}"
+																				th:value="${b.idbanco}"
+																				th:attr="choiceid=${b.idbanco}"
+																				th:text="${b.dsbanco}" />
+													</select> <label for="banco">banco: </label>
+												</div>
+												<div class="form-group" th:if="${banco != null}" style="visibility:hidden;">
+													<select id="banco" name="banco" class="user-form-control">
+														<option th:value="0">--Seleccione Banco--</option>
+														<option th:each="b : ${bancos}"
+																				th:value="${b.idbanco}"
+																				th:attr="selected = (${banco} == ${b.idbanco})"
+																				th:text="${p.dsbanco}" />
+													</select> <label for="banco">Banco: </label>													
+												</div>
+											</div>
+										</div>
+										<div class="row" >
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdsucur}" id="cdsucur" name="cdsucur"  maxlength="4" required/>
+													<label for="cdsucur">Sucursal: * </label>
+													<small th:if="${#fields.hasErrors('cdsucur')}" th:errors="*{cdsucur}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdbic}" id="cdbic" name="cdbic"  maxlength="11" required/>
+													<label for="cdbic">BIC: * </label>
+													<small th:if="${#fields.hasErrors('cdbic')}" th:errors="*{cdbic}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsdomic}" id="dsdomic" name="dsdomic"  maxlength="40" required/>
+													<label for="dsdomic">Domicilio: * </label>
+													<small th:if="${#fields.hasErrors('dsdomic')}" th:errors="*{dsdomic}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsplaza}" id="dsplaza" name="dsplaza"  maxlength="40" required/>
+													<label for="dsplaza">Localidad: * </label>
+													<small th:if="${#fields.hasErrors('dsplaza')}" th:errors="*{dsplaza}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdprov}" id="cdprov" name="cdprov"  maxlength="2" required/>
+													<label for="cdprov">Provincia: * </label>
+													<small th:if="${#fields.hasErrors('cdprov')}" th:errors="*{cdprov}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdnacion}" id="cdnacion" name="cdnacion"  maxlength="11" required/>
+													<label for="cdnacion">Nación: * </label>
+													<small th:if="${#fields.hasErrors('cdbic')}" th:errors="*{cdbic}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsresto}" id="dsresto" name="dsresto"  maxlength="100" />
+													<label for="dsresto">Información adicional: </label>
+													<small th:if="${#fields.hasErrors('dsresto')}" th:errors="*{dsresto}" class="form-text text-danger"></small>
+												</div>
+											</div>										
+										</div>
+										
+										<!-- Si hay error al insertar una sucursal que ya existe -->
+											<div class="col-md-8" th:if="${mensajeError != null}">
+												<div class="form-group">
+													<p th:text="${mensajeError}" class="form-text text-danger"></p>
+												</div>
+											</div>
+											
+										<br>
+										<p>* Campo obligatorio</p>
+										<br>
+										
+										<div class="row">
+											<div class="col-md-4 text-center" th:if="${editar == 'si' || aniadir == 'si'}">											
+												<input type="submit" class="btn btn-primary">
+												<a th:href="@{sucurbas}" class="btn btn-primary">Volver</a> 
+											</div>									
+										</div>
+									</div>	<!-- Añadir o Editar -->
+								</div>	
+							</form>
+							<br>
+							<div class="panel" th:if="${mostrarTabla == 'si'}">
+							<div class="panel-body">
+							  	<div class="panel-info container">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="table-responsive">
+												<table class="ma-table table">
+													<thead>
+														<tr>
+															<th>Banco:</th>
+											                <th>Código de banco:</th>
+											                <th>Sucursal:</th>
+											                <th>BIC:</th>
+											                <th>Domicilio:</th>
+											                <th>Localidad:</th>
+											                <th>Provincia:</th>
+											                <th>Nacion:</th>
+											                <th>Informacion General:</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="p:${sucurbaNuevaModificada}">
+															<td th:text="${p.banco.dsbanco}"></td>
+															<td th:text="${p.banco.cdbanco}"></td>
+															<td th:text="${p.cdsucur}"></td>
+															<td th:text="${p.cdbic}"></td>
+															<td th:text="${p.dsdomic}"></td>
+															<td th:text="${p.dsplaza}"></td>
+															<td th:text="${p.cdprov}"></td>
+															<td th:text="${p.cdnacion}"></td>
+															<td th:text="${p.dsresto}"></td>
+														</tr>    
+													</tbody>
+												</table>
+											</div>	<!-- class="table-responsive" -->
+										</div>
+									</div> 
+							  	</div>	
+							</div>
+						  </div>	
+						</div>						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> <!-- main cierra col-md-9 contenido -->
+			</div> <!-- main cierra row-offcanvas-left -->
+		  </div>  <!-- main cierra col-md-12 main-->
+		</div><!-- cierra row -->
+
+		<!-- Cierre containeer -->
+
+	<!-- Footer -->
+	<div th:replace="Footer.html :: pie"></div>
+	<!-- End Footer -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script th:src="@{/js/script.js}"></script>
+	
+
+</body>
+
+</html>
