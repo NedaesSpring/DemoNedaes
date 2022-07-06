@@ -75,6 +75,10 @@ public class PerceptorServiceImpl implements IPerceptorService {
 		else
 			Scdprov = perceptor.getProvincia().getCdprov().toString();
 		perceptor.setCdprov(Scdprov);
+		perceptor.setCdsiglas(perceptor.getSigdom().getCdsiglas());
+		perceptor.setIdtprovinc(perceptor.getProvincia().getIdProvincia());
+		perceptor.setIdthabilit(perceptor.getHabilitacion().getIdHabilitacion());
+		perceptor.setIdtclasnom(perceptor.getClasenomina().getIdClasenomina());
 		Perceptor perceptorInsertado = perceptorRepository.save(perceptor);
 		return perceptorInsertado;
 	}
@@ -141,7 +145,7 @@ public class PerceptorServiceImpl implements IPerceptorService {
 				idBperadm = perceptor.getBperadm().getIdbperadm();
 			}
 		}
-        listado = perceptorRepository.buscarPerceptoresPorFiltro(perceptor.getNombre(), perceptor.getApellidos(), perceptor.getDsapell2(), perceptor.getDni(), perceptor.getDup(), perceptor.getCn(), perceptor.getHab(), 
+        listado = perceptorRepository.buscarPerceptoresPorFiltro(perceptor.getNombre(), perceptor.getDsapell1(), perceptor.getDsapell2(), perceptor.getDni(), perceptor.getDup(), perceptor.getCn(), perceptor.getHab(), 
         		idBperadm, idProvincia, idClasenomina, idHabilitacion, idBperban);       
         
 		return listado;
@@ -205,7 +209,7 @@ public class PerceptorServiceImpl implements IPerceptorService {
 			}
 		}
 		
-        listado = perceptorRepository.buscarPerceptoresPorFiltroPageable(perceptor.getNombre(), perceptor.getApellidos(), perceptor.getDsapell2(), perceptor.getDni(), perceptor.getDup(), perceptor.getCn(), perceptor.getHab(), 
+        listado = perceptorRepository.buscarPerceptoresPorFiltroPageable(perceptor.getNombre(), perceptor.getDsapell1(), perceptor.getDsapell2(), perceptor.getDni(), perceptor.getDup(), perceptor.getCn(), perceptor.getHab(), 
         		idBperadm, idProvincia, idClasenomina, idHabilitacion, idBperban, pagina);       
 		return listado;
 	}
@@ -220,8 +224,6 @@ public class PerceptorServiceImpl implements IPerceptorService {
 	public int editarPerceptor(Perceptor perceptor) {
 		
 		Integer idProvincia = null;
-		Integer idClasenomina = null;
-		Integer idHabilitacion = null;
 		
 		if (Objects.equals(null, perceptor.getProvincia())){
 			idProvincia = null;
@@ -233,31 +235,10 @@ public class PerceptorServiceImpl implements IPerceptorService {
 			}
 		}
 		
-		if (Objects.equals(null, perceptor.getClasenomina())){
-			idClasenomina = null;
-		} else {
-			if (Objects.equals(0, perceptor.getClasenomina().getIdClasenomina())){
-				idClasenomina = null;
-			} else {
-				idClasenomina = perceptor.getClasenomina().getIdClasenomina();
-			}
-		}
-		
-		if (Objects.equals(null, perceptor.getHabilitacion())){
-			idHabilitacion = null;
-		} else {
-			if (Objects.equals(0, perceptor.getHabilitacion().getIdHabilitacion())){
-				idHabilitacion = null;
-			} else {
-				idHabilitacion = perceptor.getHabilitacion().getIdHabilitacion();
-			}
-		}
-				
-		return perceptorRepository.actualizarPerceptor(perceptor.getNombre(), perceptor.getApellidos(), perceptor.getDsapell2(), idProvincia,
-				perceptor.getIdPerceptor(), perceptor.getDni(), 
-				perceptor.getProvincia().getCdprov().toString(), perceptor.getCdsexo(), perceptor.getCddomnot(), perceptor.getCdforpag(), perceptor.getCdnumero(), perceptor.getDsviapub(),
-//				perceptor.getSit(), 
-				perceptor.getDup(), perceptor.getCn(), perceptor.getHab(), idClasenomina, idHabilitacion );
+		return perceptorRepository.actualizarPerceptor(perceptor.getNombre(), perceptor.getDsapell1(), perceptor.getDsapell2(), perceptor.getCdsexo(),
+				perceptor.getCddomnot(), perceptor.getCdforpag(), perceptor.getCdnumero(), perceptor.getDsviapub(), perceptor.getSigdom().getCdsiglas(), 
+//				idProvincia, perceptor.getProvincia().getCdprov().toString(),
+				perceptor.getIdPerceptor());				
 	}
 
 	public Perceptor buscarPerceptorPorId(Integer id) {
@@ -277,10 +258,16 @@ public class PerceptorServiceImpl implements IPerceptorService {
 
 	public Integer existePerceptor(Perceptor perceptor) {
 
-		if (perceptor.getApellidos().equals("")) {
-			perceptor.setApellidos(null);
+		if (perceptor.getDsapell1().equals("")) {
+			perceptor.setDsapell1(null);
 		}
-		Perceptor p = perceptorRepository.existePerceptor(perceptor.getNombre(), perceptor.getApellidos(), perceptor.getDsapell2());
+		if (perceptor.getDsapell2().equals("")) {
+			perceptor.setDsapell2(null);
+		}
+		if (perceptor.getNombre().equals("")) {
+			perceptor.setNombre(null);
+		}
+		Perceptor p = perceptorRepository.existePerceptor(perceptor.getNombre(), perceptor.getDsapell1(), perceptor.getDsapell2());
 		if (Objects.equals(null, p)) {
 			return 0;
 		} else {
@@ -311,8 +298,8 @@ public class PerceptorServiceImpl implements IPerceptorService {
 			nombre = perceptor.getNombre();
 		}
 		
-		if (perceptor.getApellidos() != null && perceptor.getApellidos() != "") {
-			dsapell1 = perceptor.getApellidos();
+		if (perceptor.getDsapell1() != null && perceptor.getDsapell1() != "") {
+			dsapell1 = perceptor.getDsapell1();
 		}
 
 		if (perceptor.getDsapell2() != null && perceptor.getDsapell2() != "") {

@@ -37,9 +37,17 @@ import nedaes.demo.model.Banco;
 import nedaes.demo.model.Bperadm;
 import nedaes.demo.model.Bperban;
 import nedaes.demo.model.Clasenomina;
+import nedaes.demo.model.Delhac;
+import nedaes.demo.model.Habilitacion;
+import nedaes.demo.model.HabilitacionBancaria;
 import nedaes.demo.model.HabilitacionInicial;
+import nedaes.demo.model.HabilitacionMutua;
+import nedaes.demo.model.HabilitacionPersonal;
+import nedaes.demo.model.Localid;
 import nedaes.demo.model.Perceptor;
 import nedaes.demo.model.Provinc;
+import nedaes.demo.model.Sigdom;
+import nedaes.demo.model.Sucurba;
 import nedaes.demo.service.IBancosService;
 import nedaes.demo.service.IBperadmService;
 import nedaes.demo.service.IBperbanService;
@@ -47,6 +55,7 @@ import nedaes.demo.service.IClasenominaService;
 import nedaes.demo.service.IHabilitacionInicialService;
 import nedaes.demo.service.IPerceptorService;
 import nedaes.demo.service.IProvincService;
+import nedaes.demo.service.ISigdomService;
 
 @Controller
 public class PerceptorControler {
@@ -75,6 +84,9 @@ public class PerceptorControler {
 	private IBancosService bancosService;
 
 	@Autowired
+	private ISigdomService sigdomService;
+	
+	@Autowired
 	private IHabilitacionInicialService habilitacionService;
 	
 	@GetMapping("/listarPerceptores")
@@ -94,16 +106,12 @@ public class PerceptorControler {
 	@GetMapping("/inicioPerceptor/{pageNumber}")
 	public String inicioPerceptor(Model model, @PathVariable("pageNumber") int currentPage, HttpServletRequest request) {
 		
-		model.addAttribute("currentPage", currentPage);
 		limpiarCampos(model);
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-		model.addAttribute("bancos", bancosService.buscarTodos());
-//		model.addAttribute("bperadms", bperadmService.buscarTodos());
-		
+		guardarCombos(model);
+		inicializaItemCombos(model);
 		
 		model.addAttribute("eppResultados", "10");
+		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalPages", currentPage);
 		return "ConsultaPerceptor";
 	}
@@ -119,66 +127,16 @@ public class PerceptorControler {
 			if (eppResultados == null)	capacidad = 10;
 			else 						capacidad = Integer.parseInt(eppResultados);
 
-			if (Objects.equals("", perceptorBuscado.getNombre())) {
-				perceptorBuscado.setNombre(null);
-			}
-
-			if (Objects.equals("", perceptorBuscado.getApellidos())) {
-				perceptorBuscado.setApellidos(null);
-			}
-			if (Objects.equals("", perceptorBuscado.getDni())) {
-				perceptorBuscado.setDni(null);
-			}
-/*			
-			if (Objects.equals("", perceptorBuscado.getSit())) {
-				perceptorBuscado.setSit(null);
-			}
-*/			
-			if (Objects.equals("", perceptorBuscado.getDup())) {
-				perceptorBuscado.setDup(null);
-			}
-			Provinc provincia = new Provinc();
-			provincia.setIdProvincia(idProvincia); 
-			perceptorBuscado.setProvincia(provincia);
 			
-			Page<Perceptor> listadoPerceptores = perceptorService.buscarListadoPageable(perceptorBuscado, currentPage, capacidad);
-			List<Perceptor> perceptores = listadoPerceptores.getContent();
+			perceptorBuscado= validarFiltros(perceptorBuscado);	
+			
+			Page<Perceptor> pagePerceptor = perceptorService.buscarListadoPageable(perceptorBuscado, currentPage, capacidad);
+			List<Perceptor> perceptores = pagePerceptor.getContent();
 			model.addAttribute("listado", perceptores);
-			model.addAttribute("id", perceptorBuscado.getIdPerceptor());
-			model.addAttribute("nombre", perceptorBuscado.getNombre());
-			model.addAttribute("apellidos", perceptorBuscado.getApellidos());
-			model.addAttribute("dni", perceptorBuscado.getDni());
-//			model.addAttribute("sit", perceptorBuscado.getSit());
-			model.addAttribute("dup", perceptorBuscado.getDup());
-			if (Objects.equals(null, perceptorBuscado.getProvincia())){
-				model.addAttribute("provincia", new Provinc());
-			} else {
-				model.addAttribute("provincia", perceptorBuscado.getProvincia());
-			}
+			guardarFiltros(model, perceptorBuscado);
+			guardarCombos(model);
+			guardarTotales(model, pagePerceptor, currentPage, eppResultados);
 			
-			if (Objects.equals(null, perceptorBuscado.getClasenomina())){
-				model.addAttribute("clasenomina", new Clasenomina());
-			} else {
-				model.addAttribute("clasenomina", perceptorBuscado.getClasenomina());
-			}
-			
-			if (Objects.equals(null, perceptorBuscado.getHabilitacion())){
-				model.addAttribute("habilitacion", new HabilitacionInicial());
-			} else {
-				model.addAttribute("habilitacion", perceptorBuscado.getHabilitacion());
-			}
-			
-			model.addAttribute("provincias", provinciaService.listarProvincias());
-			model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-			model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-			
-			
-			model.addAttribute("eppResultados", eppResultados);
-			model.addAttribute("currentPage", currentPage);
-			model.addAttribute("totalPages", listadoPerceptores.getTotalPages());
-			model.addAttribute("totalItems", listadoPerceptores.getTotalElements());
-			model.addAttribute("totalItemsPage", listadoPerceptores.getNumberOfElements());
-
 			return "ConsultaPerceptor";
 		
 	}
@@ -193,20 +151,12 @@ public class PerceptorControler {
 			if (eppResultados == null)	capacidad = 10;
 			else 						capacidad = Integer.parseInt(eppResultados);
 
-			Page<Perceptor> listadoPerceptores = perceptorService.buscarPerceptoresPorIdbanco(idbanco, currentPage, capacidad);
-			List<Perceptor> perceptores = listadoPerceptores.getContent();
+			Page<Perceptor> pagePerceptor = perceptorService.buscarPerceptoresPorIdbanco(idbanco, currentPage, capacidad);
+			List<Perceptor> perceptores = pagePerceptor.getContent();
 			model.addAttribute("listado", perceptores);
 			
-			model.addAttribute("provincias", provinciaService.listarProvincias());
-			model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-			model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-			
-			model.addAttribute("eppResultados", eppResultados);
-			model.addAttribute("currentPage", currentPage);
-			model.addAttribute("totalPages", listadoPerceptores.getTotalPages());
-			model.addAttribute("totalItems", listadoPerceptores.getTotalElements());
-			model.addAttribute("totalItemsPage", listadoPerceptores.getNumberOfElements());
-
+			guardarCombos(model);
+			guardarTotales(model, pagePerceptor, currentPage, eppResultados);
 			return "ConsultaPerceptor";
 		
 	}
@@ -214,7 +164,7 @@ public class PerceptorControler {
 	
 	
 	@GetMapping("/consultaPerceptor")
-	public String paginarPerceptor(Model model, @Param("eppResultados") String eppResultados, HttpServletRequest request) {
+	public String consultaPerceptor(Model model, @Param("eppResultados") String eppResultados, HttpServletRequest request) {
 
 		int capacidad;
 		if (eppResultados == null)	capacidad = 10;
@@ -226,27 +176,16 @@ public class PerceptorControler {
 		List<Perceptor> perceptores = pagePerceptor.getContent();
 
 		model.addAttribute("listado", perceptores);
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("provincia", new Provinc());
-		model.addAttribute("claseNominas", clasenominaService.buscarTodas());
-		model.addAttribute("clasenomina", new Clasenomina());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-		model.addAttribute("habilitacion", new HabilitacionInicial());
-//		model.addAttribute("bperadms", bperadmService.buscarTodos());
-		model.addAttribute("bperadm", new Bperadm());
-		model.addAttribute("bancos", bancosService.buscarTodos());
-		
-		model.addAttribute("eppResultados", eppResultados);
-		model.addAttribute("currentPage", currentPage);
-		model.addAttribute("totalPages", pagePerceptor.getTotalPages());
-		model.addAttribute("totalItems", pagePerceptor.getTotalElements());
-		model.addAttribute("totalItemsPage", pagePerceptor.getNumberOfElements());
+
+//		inicializaItemCombos(model);
+		guardarCombos(model);
+		guardarTotales(model, pagePerceptor, currentPage, eppResultados);
 
 		return "ConsultaPerceptor";
 	}
 	
 	@GetMapping(value = "/consultaPerceptor/{pageNumber}")
-	public String listarPerceptores(Model model, @ModelAttribute Perceptor perceptorBuscado, 
+	public String consultaPerceptores(Model model, @ModelAttribute Perceptor perceptorBuscado, 
 			@PathVariable("pageNumber") int currentPage, @Param("eppResultados") String eppResultados,
 			HttpServletRequest request) {
 
@@ -254,76 +193,15 @@ public class PerceptorControler {
 		if (eppResultados == null)	capacidad = 10;
 		else 						capacidad = Integer.parseInt(eppResultados);
 
-		if (Objects.equals("", perceptorBuscado.getNombre())) {
-			perceptorBuscado.setNombre(null);
-		}
-
-		if (Objects.equals("", perceptorBuscado.getApellidos())) {
-			perceptorBuscado.setApellidos(null);
-		}
-		if (Objects.equals("", perceptorBuscado.getDni())) {
-			perceptorBuscado.setDni(null);
-		}
-/*		
-		if (Objects.equals("", perceptorBuscado.getSit())) {
-			perceptorBuscado.setSit(null);
-		}
-*/		
-		if (Objects.equals("", perceptorBuscado.getDup())) {
-			perceptorBuscado.setDup(null);
-		}
-		if (Objects.equals(null, perceptorBuscado.getProvincia())) {
-			perceptorBuscado.setProvincia(new Provinc());
-		}
-		if (Objects.equals(null, perceptorBuscado.getClasenomina())) {
-			perceptorBuscado.setClasenomina(new Clasenomina());
-		}
-		if (Objects.equals(null, perceptorBuscado.getHabilitacion())) {
-			perceptorBuscado.setHabilitacion(new HabilitacionInicial());
-		}
-		
-		Page<Perceptor> listadoPerceptores = perceptorService.buscarListadoPageable(perceptorBuscado, currentPage, capacidad);
-		List<Perceptor> perceptores = listadoPerceptores.getContent();
-		model.addAttribute("listado", perceptores);
-		model.addAttribute("id", perceptorBuscado.getIdPerceptor());
-		model.addAttribute("nombre", perceptorBuscado.getNombre());
-		model.addAttribute("apellidos", perceptorBuscado.getApellidos());
-		model.addAttribute("dni", perceptorBuscado.getDni());
-//		model.addAttribute("sit", perceptorBuscado.getSit());
-		model.addAttribute("dup", perceptorBuscado.getDup());
-		if (Objects.equals(null, perceptorBuscado.getProvincia())){
-			model.addAttribute("provincia", new Provinc());
-		} else {
-			model.addAttribute("provincia", perceptorBuscado.getProvincia());
-		}
-		if (Objects.equals(null, perceptorBuscado.getClasenomina())){
-			model.addAttribute("clasenomina", new Clasenomina());
-		} else {
-			model.addAttribute("clasenomina", perceptorBuscado.getClasenomina());
-		}
-		if (Objects.equals(null, perceptorBuscado.getHabilitacion())){
-			model.addAttribute("habilitacion", new HabilitacionInicial());
-		} else {
-			model.addAttribute("habilitacion", perceptorBuscado.getHabilitacion());
-		}
-//		if (Objects.equals(null, perceptorBuscado.getBperadm())){
-//			model.addAttribute("bperadm", new Bperadm());
-//		} else {
-//			model.addAttribute("bperadm", perceptorBuscado.getBperadm());
-//		}
+		perceptorBuscado= validarFiltros(perceptorBuscado);	
 				
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-//		model.addAttribute("bperadms", bperadmService.buscarTodos());
-
+		Page<Perceptor> pagePerceptor = perceptorService.buscarListadoPageable(perceptorBuscado, currentPage, capacidad);
+		List<Perceptor> perceptores = pagePerceptor.getContent();
+		model.addAttribute("listado", perceptores);
+		guardarFiltros(model, perceptorBuscado);
+		guardarCombos(model);
+		guardarTotales(model, pagePerceptor, currentPage, eppResultados);
 		
-		model.addAttribute("eppResultados", eppResultados);
-		model.addAttribute("currentPage", currentPage);
-		model.addAttribute("totalPages", listadoPerceptores.getTotalPages());
-		model.addAttribute("totalItems", listadoPerceptores.getTotalElements());
-		model.addAttribute("totalItemsPage", listadoPerceptores.getNumberOfElements());
-
 		return "ConsultaPerceptor";
 	}
 
@@ -341,16 +219,11 @@ public class PerceptorControler {
 		List<Perceptor> perceptores = pagePerceptor.getContent();
 
 		model.addAttribute("listado", perceptores);
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
 		
-		model.addAttribute("eppResultados", 10);
+		guardarCombos(model);
+		guardarTotales(model, pagePerceptor, currentPage, eppResultados);
 		model.addAttribute("currentPage", 1);
-		model.addAttribute("totalPages", pagePerceptor.getTotalPages());
-		model.addAttribute("totalItems", pagePerceptor.getTotalElements());
-		model.addAttribute("totalItemsPage", pagePerceptor.getNumberOfElements());
-
+		
 		return "ConsultaPerceptor";
 	}
 	
@@ -358,11 +231,8 @@ public class PerceptorControler {
 	@GetMapping("/perceptor")
 	public String nuevaPerceptor(Model model, @ModelAttribute Perceptor perceptor, HttpServletRequest request) {
 		model.addAttribute("perceptor", new Perceptor());
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-		model.addAttribute("bancos", bancosService.buscarTodos());
-
+		guardarCombos(model);
+						
 		model.addAttribute("aniadir", "si");
 		return "Perceptor";
 	}
@@ -371,65 +241,30 @@ public class PerceptorControler {
 	public String insertarModificarPerceptor(Model model,@Valid @ModelAttribute Perceptor perceptor, BindingResult result, HttpServletRequest request) {
 		
 		LOGGER.debug("Entrando en insertarModificarPerceptor..");			
+		guardarItemCombos(model, perceptor);						
+		model.addAttribute("perceptor", perceptor);
 		
 		if (!result.hasErrors()) {
 			// No existen errores en el formulario					
 			
-			if (Objects.isNull(perceptor.getIdPerceptor()) ||  Objects.equals(0, perceptor.getIdPerceptor())  ) {
-						
+			
+			if (chequearErroresPerceptor(model, perceptor)) { 
 				// Alta: Se comprueba si ya existe la Perceptor en BD
-				Integer idPerceptor = perceptorService.existePerceptor(perceptor);
-				
-				if (!Objects.equals(0, idPerceptor)) {
-					// Perceptor ya existe
-
-					model.addAttribute("mensajeError", "El perceptor ya existe. Por favor, introduzca otros valores");
-
-					model.addAttribute("perceptor", perceptor);
-				}else {
-					// Perceptor no existe
-				 
-				 if (!Objects.equals(0,perceptor.getProvincia().getIdProvincia())) {
-				 	if (Objects.equals(null, perceptor.getProvincia())) {
-						model.addAttribute("errorProvSel", "El campo Provincia no puede estar vacío");
-						model.addAttribute("mensaje", "No se ha podido insertar/modificar el proveedor");
-					} else if (Objects.equals(null, perceptor.getClasenomina())) {
-						model.addAttribute("errorClaseNomSel", "El campo Clase Nomina no puede estar vacío");
-						model.addAttribute("mensaje", "No se ha podido insertar/modificar el proveedor");
-					} else 	if (Objects.equals(null, perceptor.getHabilitacion())) {
-						model.addAttribute("errorHabSel", "El campo Habilitacion no puede estar vacío");
-						model.addAttribute("mensaje", "No se ha podido insertar/modificar el proveedor");
+					Perceptor per = perceptorService.insertarPerceptor(perceptor);
+					if (Objects.equals(null, per.getIdPerceptor())) {
+						model.addAttribute("mensaje", "No se ha podido insertar/modificar el perceptor");
 					} else {
-						model.addAttribute("erroreProvSel", null);
-					
-						Perceptor per = perceptorService.insertarPerceptor(perceptor);
-						if (Objects.equals(null, per.getIdPerceptor())) {
-
-							model.addAttribute("mensaje", "No se ha podido insertar/modificar el perceptor");
-
-						} else {
-							model.addAttribute("perceptor", per);
-							model.addAttribute("idProvincia", per.getProvincia().getIdProvincia());
-							model.addAttribute("provincias", provinciaService.listarProvincias());
-							model.addAttribute("idClasenomina", per.getClasenomina().getIdClasenomina());
-							model.addAttribute("clasenominas", clasenominaService.buscarTodas());		
-							model.addAttribute("idHabilitacion", per.getHabilitacion().getIdHabilitacion());
-							model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-							model.addAttribute("bancos", bancosService.buscarTodos());
-							model.addAttribute("idbanco", per.getBperban().getBanco().getIdbanco());
-							model.addAttribute("mensaje", "Éxito");
-							model.addAttribute("perceptorNuevoModificado", per);
-							model.addAttribute("mostrarTabla", "si");
-						}
-				  	}
-				  }
-				}
+						model.addAttribute("perceptor", per);
+						guardarItemCombos(model, per);						
+						model.addAttribute("mensaje", "Éxito");
+						model.addAttribute("perceptorNuevoModificado", per);
+						model.addAttribute("mostrarTabla", "si");
+					}
 			}else {
 				// Modificación
 				Integer idPerceptor = perceptorService.existePerceptor(perceptor);
 				
-				
-				if (Objects.equals(0, idPerceptor)) {
+				if (Objects.equals(0, idPerceptor )) {
 					// Se está modificando el nombre del Perceptor y/o apellidos (por tanto el Perceptor a modificar existe en BD pero con otros nombres y apellidos, 
 					// el idPerceptor devuelto es 0, pq no coinciden con el q ya existe). 
 					int numero = perceptorService.editarPerceptor(perceptor);
@@ -438,19 +273,9 @@ public class PerceptorControler {
 						model.addAttribute("mensaje", "No se ha podido modificar el perceptor");
 						
 					}else {
-						model.addAttribute("perceptor", perceptor);
-						model.addAttribute("idProvincia", perceptor.getProvincia().getIdProvincia());
-						model.addAttribute("provincias", provinciaService.listarProvincias());
-						model.addAttribute("idClasenomina", perceptor.getClasenomina().getIdClasenomina());
-						model.addAttribute("clasenominas", clasenominaService.buscarTodas());		
-						model.addAttribute("idHabilitacion", perceptor.getHabilitacion().getIdHabilitacion());
-						model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-						model.addAttribute("bancos", bancosService.buscarTodos());
-						model.addAttribute("idbanco", perceptor.getBperban().getBanco().getIdbanco());
 						model.addAttribute("mensaje", "Éxito");
 						model.addAttribute("perceptorNuevoModificado", perceptor);
 						model.addAttribute("mostrarTabla", "si");
-						
 					}
 				}else {
 					// El perceptor existe en BD, puede ser el mismo perceptor (pq en este caso el nombre y los apellidos de la provincia se mantienen)
@@ -462,15 +287,6 @@ public class PerceptorControler {
 							model.addAttribute("mensaje", "No se ha podido modificar el perceptor");
 							
 						}else {
-							model.addAttribute("perceptor", perceptor);
-							model.addAttribute("idProvincia", perceptor.getProvincia().getIdProvincia());
-							model.addAttribute("provincias", provinciaService.listarProvincias());
-							model.addAttribute("idClasenomina", perceptor.getClasenomina().getIdClasenomina());
-							model.addAttribute("clasenominas", clasenominaService.buscarTodas());		
-							model.addAttribute("idHabilitacion", perceptor.getHabilitacion().getIdHabilitacion());
-							model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-							model.addAttribute("bancos", bancosService.buscarTodos());
-							model.addAttribute("idbanco", perceptor.getBperban().getBanco().getIdbanco());
 							model.addAttribute("mensaje", "Éxito");
 							model.addAttribute("perceptorNuevoModificado", perceptor);
 							model.addAttribute("mostrarTabla", "si");
@@ -480,14 +296,12 @@ public class PerceptorControler {
 						model.addAttribute("mensajeError", "El perceptor ya existe. Por favor, introduzca otros valores");
 					}
 				}
-
 			}
 		}
-
+		guardarCombos(model);
 		model.addAttribute("aniadir", "si");
 		return "Perceptor";
 	}
-
 	@GetMapping("/borrarPerceptor")
 	public String borrarPerceptor(Model model, @RequestParam(value = "id") Integer id, HttpServletRequest request) {
 
@@ -513,10 +327,8 @@ public class PerceptorControler {
 		if (perceptor != null) {
 			model.addAttribute("perceptor", perceptor);
 		}
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
-		model.addAttribute("bancos", bancosService.buscarTodos());
+		
+		guardarCombos(model);
 		model.addAttribute("editar", "si");
 		return "Perceptor";
 	}
@@ -527,23 +339,9 @@ public class PerceptorControler {
 		LOGGER.debug("Entrando en visualizarPerceptor..");
 		Perceptor perceptor = perceptorService.buscarPerceptorPorId(id);
 		model.addAttribute("perceptor", perceptor);
-		model.addAttribute("provincias", provinciaService.listarProvincias());
-		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
-		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
+		guardarCombos(model);
 		model.addAttribute("consultar", "si");
 		return "Perceptor";
-	}
-
-	private void limpiarCampos(Model model) {
-		model.addAttribute("id", null);
-		model.addAttribute("nombre", "");
-		model.addAttribute("apellidos", "");
-		model.addAttribute("dni", "");
-		model.addAttribute("sit", null);
-		model.addAttribute("dup", "");
-		model.addAttribute("idProvincia", null);
-		model.addAttribute("idHabilitacion", null);
-		model.addAttribute("idClasenomina", null);
 	}
 
 	// ************** perceptor exportcsv
@@ -559,28 +357,12 @@ public class PerceptorControler {
 		String headerValue = "attachment; filename=perceptor_" + currentDateTime + ".csv";
 		response.setHeader(headerKey, headerValue);
 
+
+		perceptorBuscado = validarFiltros(perceptorBuscado); 
+
+		
 		if (Objects.equals(0, perceptorBuscado.getIdPerceptor())) {
 			perceptorBuscado.setIdPerceptor(null);
-		}
-
-		if (Objects.equals("", perceptorBuscado.getNombre())) {
-			perceptorBuscado.setNombre(null);
-		}
-
-		if (Objects.equals("", perceptorBuscado.getApellidos())) {
-			perceptorBuscado.setApellidos(null);
-		}
-
-		if (Objects.equals("", perceptorBuscado.getDni())) {
-			perceptorBuscado.setDni(null);
-		}
-/*
-		if (Objects.equals("", perceptorBuscado.getSit())) {
-			perceptorBuscado.setSit(null);
-		}
-*/
-		if (Objects.equals("", perceptorBuscado.getDup())) {
-			perceptorBuscado.setDup(null);
 		}
 
 		List<Perceptor> listadoPerceptores = perceptorService.buscarListado(perceptorBuscado);
@@ -588,7 +370,8 @@ public class PerceptorControler {
 		List<String> columnNames = new ArrayList<>();
 		columnNames.add("ID");
 		columnNames.add("NOMBRE");
-		columnNames.add("APELLIDOS");
+		columnNames.add("1º APELLIDO");
+		columnNames.add("2º APELLIDO");
 		columnNames.add("SIT");
 		columnNames.add("DNI");
 		columnNames.add("DUP");
@@ -618,7 +401,8 @@ public class PerceptorControler {
 			int columnCount = 0;
 			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getIdPerceptor(), style));
 			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getNombre(), style));
-			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getApellidos(), style));
+			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getDsapell1(), style));
+			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getDsapell2(), style));
 //			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getSit(), style));
 			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getDni(), style));
 			celdas.add(CommonExporter.createCell(row, columnCount++, perceptor.getDup(), style));
@@ -629,4 +413,176 @@ public class PerceptorControler {
 		}
 		CommonExporter.export(response, workbook);
 	}
+	
+	private boolean chequearErroresPerceptor(Model model, Perceptor perceptor) {
+		boolean respuesta = false;
+
+		if (Objects.isNull(perceptor.getIdPerceptor()) ||  Objects.equals(0, perceptor.getIdPerceptor())  ) {
+					
+			// Alta: Se comprueba si ya existe el Perceptor en BD
+			Integer idPerceptor = perceptorService.existePerceptor(perceptor);
+			
+			if (!Objects.equals(0, idPerceptor)) {
+				// Perceptor ya existe
+
+				model.addAttribute("mensajeError", "El perceptor ya existe. Por favor, introduzca otros valores");
+
+				model.addAttribute("perceptor", perceptor);
+			}else {
+				// Perceptor no existe
+			 
+			  if (!Objects.equals(0,perceptor.getIdPerceptor())) {
+				if (Objects.equals(null, perceptor.getProvincia())) {
+					model.addAttribute("errorProvincSel", "El campo Provincia no puede estar vacío");
+					model.addAttribute("mensaje", "No se ha podido insertar/modificar la provincia");
+				} else if (Objects.equals(null, perceptor.getSigdom())) {
+					model.addAttribute("errorSigdomSel", "El campo Sigdom no puede estar vacío");
+					model.addAttribute("mensaje", "No se ha podido insertar/modificar el sigdom");
+/*				} else if ((Objects.equals(null, perceptor.getBanco())) {
+						model.addAttribute("errorBancoSel", "El campo Banco no puede estar vacío");
+						model.addAttribute("mensaje", "No se ha podido insertar/modificar el banco");
+*/						
+				} else  {
+					model.addAttribute("errorePerceptorSel", null);
+					respuesta = true;
+				}
+			  }
+			}
+		}
+		return respuesta;
+	}
+
+	private void guardarItemCombos(Model model, Perceptor perceptor) {
+		model.addAttribute("provincia", perceptor.getProvincia());
+///		model.addAttribute("banco", perceptor.getBanco());
+		model.addAttribute("sigdom", perceptor.getSigdom());
+		model.addAttribute("habilitacion", perceptor.getHabilitacion());
+		model.addAttribute("clasenomina", perceptor.getClasenomina());
+				
+		model.addAttribute("idProvincia", perceptor.getProvincia().getIdProvincia());		
+		model.addAttribute("idClasenomina", perceptor.getClasenomina().getIdClasenomina());
+		model.addAttribute("idHabilitacion", perceptor.getHabilitacion().getIdHabilitacion());
+		model.addAttribute("idbanco", perceptor.getBperban().getBanco().getIdbanco());
+		model.addAttribute("idsigdom", perceptor.getSigdom().getIdsigdom());		
+	}
+
+	private Perceptor validarFiltros(Perceptor perceptorBuscado) {
+
+		if (Objects.equals("", perceptorBuscado.getNombre())) {
+			perceptorBuscado.setNombre(null);
+		}
+
+		if (Objects.equals("", perceptorBuscado.getDsapell1())) {
+			perceptorBuscado.setDsapell1(null);
+		}
+		if (Objects.equals("", perceptorBuscado.getDsapell2())) {
+			perceptorBuscado.setDsapell2(null);
+		}
+		if (Objects.equals("", perceptorBuscado.getDni())) {
+			perceptorBuscado.setDni(null);
+		}
+
+		if (Objects.equals("", perceptorBuscado.getDup())) {
+			perceptorBuscado.setDup(null);
+		}
+		if (Objects.equals(null, perceptorBuscado.getProvincia())) {
+			perceptorBuscado.setProvincia(new Provinc());
+		}
+		if (Objects.equals(null, perceptorBuscado.getClasenomina())) {
+			perceptorBuscado.setClasenomina(new Clasenomina());
+		}
+		if (Objects.equals(null, perceptorBuscado.getHabilitacion())) {
+			perceptorBuscado.setHabilitacion(new HabilitacionInicial());
+		}		
+		return perceptorBuscado;
+	
+	}		
+	
+	private void guardarFiltros(Model model, Perceptor perceptorBuscado) {
+		
+		model.addAttribute("id", perceptorBuscado.getIdPerceptor());
+		model.addAttribute("nombre", perceptorBuscado.getNombre());
+		model.addAttribute("dsapell1", perceptorBuscado.getDsapell1());
+		model.addAttribute("dsapell2", perceptorBuscado.getDsapell2());
+		model.addAttribute("dni", perceptorBuscado.getDni());
+//		model.addAttribute("sit", perceptorBuscado.getSit());
+		model.addAttribute("dup", perceptorBuscado.getDup());
+		if (Objects.equals(null, perceptorBuscado.getProvincia())){
+			model.addAttribute("provincia", new Provinc());
+		} else {
+			model.addAttribute("provincia", perceptorBuscado.getProvincia());
+		}
+		if (Objects.equals(null, perceptorBuscado.getClasenomina())){
+			model.addAttribute("clasenomina", new Clasenomina());
+		} else {
+			model.addAttribute("clasenomina", perceptorBuscado.getClasenomina());
+		}
+		if (Objects.equals(null, perceptorBuscado.getHabilitacion())){
+			model.addAttribute("habilitacion", new HabilitacionInicial());
+		} else {
+			model.addAttribute("habilitacion", perceptorBuscado.getHabilitacion());
+		}
+		if (Objects.equals(null, perceptorBuscado.getSigdom())){
+			model.addAttribute("sigdom", new Sigdom());
+		} else {
+			model.addAttribute("sigdom", perceptorBuscado.getSigdom());
+		}
+//		if (Objects.equals(null, perceptorBuscado.getBperadm())){
+//			model.addAttribute("bperadm", new Bperadm());
+//		} else {
+//			model.addAttribute("bperadm", perceptorBuscado.getBperadm());
+//		}
+		/*	
+		if (Objects.equals(null, perceptorBuscado.getBanco())){
+			model.addAttribute("banco", new Banco());
+		} else {
+			model.addAttribute("banco", perceptorBuscado.getBanco());
+		}
+		*/			
+	}
+	
+	private void inicializaItemCombos(Model model) {
+		Perceptor perceptor = new Perceptor();
+		perceptor.setProvincia(new Provinc());
+//		perceptor.setBanco(new Banco());
+		perceptor.setSigdom(new Sigdom());
+		perceptor.setHabilitacion(new HabilitacionInicial());
+		
+		model.addAttribute("perceptor", perceptor); 
+		model.addAttribute("provincia", new Provinc());
+		model.addAttribute("habilitacion", new HabilitacionInicial());
+		model.addAttribute("banco", new Banco());
+		model.addAttribute("sigdom", new Sigdom());
+	}
+
+	private void guardarCombos(Model model) {
+		model.addAttribute("provincias",  provinciaService.listarProvincias());
+		model.addAttribute("clasenominas", clasenominaService.buscarTodas());
+		model.addAttribute("habilitaciones", habilitacionService.buscarTodos());
+		model.addAttribute("bancos", bancosService.buscarTodos());
+//	model.addAttribute("bperadms", bperadmService.buscarTodos());
+		model.addAttribute("sigdoms", sigdomService.buscarTodos());
+	}
+			
+	private void guardarTotales(Model model, Page<Perceptor> pagePerceptor,  int currentPage, String eppResultados)
+	{		
+		model.addAttribute("eppResultados", eppResultados);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalPages", pagePerceptor.getTotalPages());
+		model.addAttribute("totalItems", pagePerceptor.getTotalElements());
+		model.addAttribute("totalItemsPage", pagePerceptor.getNumberOfElements());
+	}
+	
+	private void limpiarCampos(Model model) {
+		model.addAttribute("id", null);
+		model.addAttribute("cdhabil", "");
+		model.addAttribute("dsorg", "");
+		model.addAttribute("dscentro", "");
+		model.addAttribute("idbanco", null);
+		model.addAttribute("idlocalid", null);
+		model.addAttribute("idsucurba", null);
+		model.addAttribute("cdprov", null);
+		model.addAttribute("idsigdom", null);
+		model.addAttribute("cddelhac", null);
+	}		
 }

@@ -85,7 +85,8 @@ public class HabilitacionBancariaServiceImpl implements IHabilitacionBancariaSer
 				cddelhac = habilitacion.getDelhac().getCddelhac();
 			}
 		}
-		return habilitacionBancariaRepository.actualizarHabilitacion(habilitacion.getIdHabilitacion(), habilitacion.getCdhabil(), habilitacion.getCdident(), idbanco, idsucurba,
+		return habilitacionBancariaRepository.actualizarHabilitacion(habilitacion.getIdHabilitacion(), habilitacion.getCdhabil(), habilitacion.getCdident(),
+//				idbanco, idsucurba,
 				habilitacion.getCdcuenta(), habilitacion.getCdcodee(), habilitacion.getCdbic(), habilitacion.getOtchetra(),
 				habilitacion.getOtorden(), habilitacion.getCdgastos(), habilitacion.getSuford(), habilitacion.getOtidentinst(),
 				habilitacion.getCdpropct(), habilitacion.getCdcargo(), habilitacion.getCdemisorbde(), habilitacion.getDsmsgidxml(),

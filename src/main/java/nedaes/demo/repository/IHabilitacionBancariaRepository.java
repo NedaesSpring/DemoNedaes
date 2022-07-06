@@ -22,8 +22,8 @@ public interface IHabilitacionBancariaRepository extends JpaRepository<Habilitac
 	@Query("UPDATE HabilitacionBancaria h SET "
 			+ "h.cdhabil = :cdhabil, "
 			+ "h.cdident = :cdident, "
-			+ "h.banco.idbanco = :idbanco, "
-			+ "h.sucurba.idsucurba = :idsucurba, "       
+//			+ "h.banco.idbanco = :idbanco, "
+//			+ "h.sucurba.idsucurba = :idsucurba, "       
 			+ "h.cdcuenta = :cdcuenta, " 
 			+ "h.cdcodee = :cdcodee, "	
 			+ "h.cdbic = :cdbic, " 
@@ -57,7 +57,8 @@ public interface IHabilitacionBancariaRepository extends JpaRepository<Habilitac
 			+ "h.cddirdesfunciona = :cddirdesfunciona "			
 			+ " where h.idHabilitacion = :idHabilitacion")
 	int actualizarHabilitacion(@Param("idHabilitacion") Integer idHabilitacion, @Param("cdhabil") String cdhabil,
-			@Param("cdident") String cdident, @Param("idbanco") Integer idbanco, @Param("idsucurba") Integer idsucurba,
+			@Param("cdident") String cdident, 
+//			@Param("idbanco") Integer idbanco, @Param("idsucurba") Integer idsucurba,
 			@Param("cdcuenta") String cdcuenta, @Param ("cdcodee") String cdcodee, @Param ("cdbic") String cdbic,			
 			@Param ("otchetra") String otchetra, @Param ("otorden") String  otorden, 
 			@Param ("cdgastos") Integer cdgastos , @Param ("suford") String suford , @Param ("otidentinst") String otidentinst,

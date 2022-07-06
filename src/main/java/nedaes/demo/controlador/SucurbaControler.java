@@ -37,6 +37,7 @@ package nedaes.demo.controlador;
 import nedaes.demo.service.IBancosService;
 import nedaes.demo.service.ISucurbaService;
 	import nedaes.demo.model.Banco;
+import nedaes.demo.model.Perceptor;
 	
 	@Controller
 	public class SucurbaControler {
@@ -55,7 +56,7 @@ import nedaes.demo.service.ISucurbaService;
 		private IBancosService bancosService; 
 		
 		@GetMapping("/sucurbas")
-		public String customersPage(Model model, HttpServletRequest request) {
+		public String sucurbas(Model model, HttpServletRequest request) {
 
 			return inicioSucurba(model, 1, request);
 		}
@@ -87,11 +88,7 @@ import nedaes.demo.service.ISucurbaService;
 
 			model.addAttribute("listado", sucurbas);
 
-			model.addAttribute("eppResultados", eppResultados);
-			model.addAttribute("currentPage", currentPage);
-			model.addAttribute("totalPages", pageSucurba.getTotalPages());
-			model.addAttribute("totalItems", pageSucurba.getTotalElements());
-			model.addAttribute("totalItemsPage", pageSucurba.getNumberOfElements());
+			guardarTotales(model, pageSucurba, currentPage, eppResultados);
 
 			return "ConsultaSucurba";
 		}
@@ -105,13 +102,7 @@ import nedaes.demo.service.ISucurbaService;
 			if (eppResultados == null)	capacidad = 10;
 			else 						capacidad = Integer.parseInt(eppResultados);
 
-			if (Objects.equals("", sucurbaBuscado.getCdsucur())) {
-				sucurbaBuscado.setCdsucur(null);        
-			}
-
-			if (Objects.equals(null, sucurbaBuscado.getCdbanco())) {
-				sucurbaBuscado.setCdbanco(null);
-			}
+			sucurbaBuscado= validarFiltros(sucurbaBuscado);	
 
 			Page<Sucurba> listadoSucurbas = sucurbaService.buscarListadoPageable(sucurbaBuscado, currentPage, capacidad);
 			List<Sucurba> sucurbas = listadoSucurbas.getContent();
@@ -119,16 +110,12 @@ import nedaes.demo.service.ISucurbaService;
 			model.addAttribute("cdsucur", sucurbaBuscado.getCdsucur());
 			model.addAttribute("cdbanco", sucurbaBuscado.getCdbanco());
 			
-			model.addAttribute("eppResultados", eppResultados);
-			model.addAttribute("currentPage", currentPage);
-			model.addAttribute("totalPages", listadoSucurbas.getTotalPages());
-			model.addAttribute("totalItems", listadoSucurbas.getTotalElements());
-			model.addAttribute("totalItempsPage", listadoSucurbas.getNumberOfElements());
+			guardarTotales(model, listadoSucurbas, currentPage, eppResultados);
 
 			return "ConsultaSucurba";
 		}
 		
-		
+	
 		
 	@GetMapping(value = "/listarSucursalesBanco")
 	public String listarSucursalesBanco(Model model, @ModelAttribute Sucurba sucurbaBuscado, 
@@ -149,13 +136,10 @@ import nedaes.demo.service.ISucurbaService;
 			List<Sucurba> sucurbas = listadoSucurbas.getContent();
 			model.addAttribute("listado", sucurbas);
 			model.addAttribute("cdbanco", sucurbas.get(0).getCdbanco());
+			model.addAttribute("idbanco", idbanco);
 			
-			model.addAttribute("eppResultados", eppResultados);
-			model.addAttribute("currentPage", currentPage);
-			model.addAttribute("totalPages", listadoSucurbas.getTotalPages());
-			model.addAttribute("totalItems", listadoSucurbas.getTotalElements());
-			model.addAttribute("totalItemsPage", listadoSucurbas.getNumberOfElements());
-
+			guardarTotales(model, listadoSucurbas, currentPage, eppResultados);
+			
 			return "ConsultaSucurba";
 		
 	}
@@ -173,28 +157,35 @@ import nedaes.demo.service.ISucurbaService;
 			List<Sucurba> sucurbas = listadoSucurbas.getContent();
 			model.addAttribute("listado", sucurbas);
 			
-			model.addAttribute("eppResultados", 10);
-			model.addAttribute("currentPage", 1);
-			model.addAttribute("totalPages", listadoSucurbas.getTotalPages());
-			model.addAttribute("totalItems", listadoSucurbas.getTotalElements());
-			model.addAttribute("totalItempsPage", listadoSucurbas.getNumberOfElements());
-
+			guardarTotales(model, listadoSucurbas, 1, eppResultados);
+			
 			return "ConsultaSucurba";
 		}
 
 		
 		@GetMapping("/sucurba")
-		public String nuevoSucurba(Model model, @ModelAttribute Sucurba sucurba, HttpServletRequest request) {
-			model.addAttribute("sucurba", new Sucurba());
-
-			model.addAttribute("aniadir", "si");
-			return "Sucurba";
+		public String nuevaSucurba(Model model, @ModelAttribute Sucurba sucurba, @RequestParam(value = "idbanco") Integer idbanco, HttpServletRequest request) {
+			if (idbanco== null) {
+				model.addAttribute("mensajeError", "Para Nueva Sucursal debe haber primero elegido un banco desde la lista de bancos");
+				return inicioSucurba(model, 1, request);
+		    } else {
+				Sucurba sucurbaNueva = new Sucurba();
+				Banco banco = bancosService.buscarBancoPorId(idbanco);
+				sucurbaNueva.setBanco(banco);
+			
+				sucurbaNueva.setCdbanco(banco.getCdbanco());
+				model.addAttribute("sucurba", sucurbaNueva);
+				model.addAttribute("bancos", bancosService.buscarTodos());
+			
+				model.addAttribute("aniadir", "si");
+				return "Sucurba";
+			}
 		}
 				 
 		@GetMapping("/insertarModificarSucurba")
 		public String insertarModificarSucurba(Model model,@Valid @ModelAttribute Sucurba sucurba, BindingResult result, HttpServletRequest request) {
 			
-			LOGGER.debug("Entrando en insertarModificarSucurba..");			
+			LOGGER.debug("Entrando en insertarModificarSucurba.");			
 			
 			if (!result.hasErrors()) {
 				// No existen errores en el formulario					
@@ -317,12 +308,6 @@ import nedaes.demo.service.ISucurbaService;
 		}
 
 
-		private void limpiarCampos(Model model) {
-			model.addAttribute("idsucurba", null);
-			model.addAttribute("dssucurba", "");
-			model.addAttribute("cdsucurba", "");
-		}
-
 		// ************** sucurba exportcsv
 
 		@GetMapping("/exportSucurba")
@@ -392,5 +377,33 @@ import nedaes.demo.service.ISucurbaService;
 			}
 			CommonExporter.export(response, workbook);
 		}
+		
+		private Sucurba validarFiltros(Sucurba sucurbaBuscado) {
 
+			if (Objects.equals("", sucurbaBuscado.getCdsucur())) {
+				sucurbaBuscado.setCdsucur(null);        
+			}
+	
+			if (Objects.equals(null, sucurbaBuscado.getCdbanco())) {
+				sucurbaBuscado.setCdbanco(null);
+			}		
+			return sucurbaBuscado;	
+		}		
+	
+		private void guardarTotales(Model model, Page<Sucurba> pageSucurba,  int currentPage, String eppResultados)
+		{		
+			model.addAttribute("eppResultados", eppResultados);
+			model.addAttribute("currentPage", currentPage);
+			model.addAttribute("totalPages", pageSucurba.getTotalPages());
+			model.addAttribute("totalItems", pageSucurba.getTotalElements());
+			model.addAttribute("totalItemsPage", pageSucurba.getNumberOfElements());
+		}
+
+				private void limpiarCampos(Model model) {
+			model.addAttribute("idsucurba", null);
+			model.addAttribute("dssucurba", "");
+			model.addAttribute("cdsucurba", "");
+		}
+
+		
 }

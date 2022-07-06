@@ -28,7 +28,7 @@
 					<ul>
 						<li xmlns:myobj="mgm:component-link"><a
 							href="https://portal.mineco.gob.es/">Inicio</a></li>
-						<li><b>Provincias</b></li>
+						<li><b>Sucursales</b></li>
 					</ul>
 				</div>
 				<div class="col-md-12" id="main">
@@ -62,6 +62,8 @@
 							</div>
 							<form th:action="@{/insertarModificarSucurba}" enctype="multipart/form-data" th:object="${sucurba}" id="sucurba" name="sucurba">
 								<input type="hidden" name="idsucurba" id="idsucurba" th:field="*{idsucurba}" />
+								<input type="hidden" th:field="*{cdbanco}" id="cdbanco" name="cdbanco"  />
+													
 								<div class="panel-body">
 									<!-- Consultar -->
 									<div class="panel-info container" th:if="${consultar == 'si'}">
@@ -69,7 +71,7 @@
 											<div class="col-md-4">
 											<!-- Ent. Bancaria y Codigo de banco?? -->
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdbanco}" disabled/>
+													<input class="material-inputs" type="text" th:field="*{banco.dsbanco}" disabled/>
 													<label for="cdbanco">Código de banco: </label>
 												</div>
 											</div>
@@ -159,7 +161,7 @@
 											<div class="col-md-4">
 												<div class="form-group">
 													<input class="material-inputs" type="text" th:field="*{banco.dsbanco}" id="dsbanco" name="dsbanco" maxlength="35" disabled />
-													<label for="dsbanco">Entidad Bancaria: *</label>
+													<label for="dsbanco">Entidad Bancaria:</label>
 												</div>
 											</div>
 											<!-- Objeto Completo Banco oculto pero necesario para el update -->
@@ -195,8 +197,8 @@
 											
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdbic}" id="cdbic" name="cdbic"  maxlength="11" required/>
-													<label for="cdbic">BIC: * </label>
+													<input class="material-inputs" type="text" th:field="*{cdbic}" id="cdbic" name="cdbic"  maxlength="11" />
+													<label for="cdbic">BIC:  </label>
 													<small th:if="${#fields.hasErrors('cdbic')}" th:errors="*{cdbic}" class="form-text text-danger"></small>
 												</div>
 											</div>
@@ -204,24 +206,50 @@
 											
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{dsdomic}" id="dsdomic" name="dsdomic"  maxlength="40" required/>
-													<label for="dsdomic">Domicilio: * </label>
+													<input class="material-inputs" type="text" th:field="*{dsdomic}" id="dsdomic" name="dsdomic"  maxlength="40" />
+													<label for="dsdomic">Domicilio: </label>
 													<small th:if="${#fields.hasErrors('dsdomic')}" th:errors="*{dsdomic}" class="form-text text-danger"></small>
 												</div>
 											</div>
 											
+											
+											<!-- 
+											
+											<div class="col-md-4">
+												<div class="form-group" > 
+		 											<select id="provinc" name="provinc" th:field="*{provinc}" onchange='CargarLocalidades()' class="user-form-control">
+														<option th:each="p : ${provincs}"
+																th:value="${p.cdprov}"
+																th:attr="selected = (${provinc.getCdprov()} == ${p.cdprov})"
+																th:text="${p.dsprov}"/>
+													</select> <label for="provinc">Provincia: </label>
+	  											</div>
+											</div>
+										
+											<div class="col-md-4">
+   												<div class="form-group" >  
+													<select id="localid" name="localid" th:field="*{localid}" class="user-form-control">
+														<option th:fragment="fraglocalid" th:each="l : ${localids}"
+																th:value="${l.idlocalid}"
+																th:attr="choiceid=${l.idlocalid}"																		
+																th:text="${l.dsloc}" />
+													</select> <label for="localid">Localidad: </label>
+												</div>												
+ 											</div>
+											
+											-->
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{dsplaza}" id="dsplaza" name="dsplaza"  maxlength="40" required/>
-													<label for="dsplaza">Localidad: * </label>
+													<input class="material-inputs" type="text" th:field="*{dsplaza}" id="dsplaza" name="dsplaza"  maxlength="40" />
+													<label for="dsplaza">Localidad: </label>
 													<small th:if="${#fields.hasErrors('dsplaza')}" th:errors="*{dsplaza}" class="form-text text-danger"></small>
 												</div>
 											</div>
 											
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdprov}" id="cdprov" name="cdprov"  maxlength="2" required/>
-													<label for="cdprov">Provincia: * </label>
+													<input class="material-inputs" type="text" th:field="*{cdprov}" id="cdprov" name="cdprov"  maxlength="2" />
+													<label for="cdprov">Provincia:  </label>
 													<small th:if="${#fields.hasErrors('cdprov')}" th:errors="*{cdprov}" class="form-text text-danger"></small>
 												</div>
 											</div>
@@ -229,15 +257,15 @@
 											
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdnacion}" id="cdnacion" name="cdnacion"  maxlength="11" required/>
-													<label for="cdnacion">Nación: * </label>
+													<input class="material-inputs" type="text" th:field="*{cdnacion}" id="cdnacion" name="cdnacion"  maxlength="3" />
+													<label for="cdnacion">Nación:  </label>
 													<small th:if="${#fields.hasErrors('cdbic')}" th:errors="*{cdbic}" class="form-text text-danger"></small>
 												</div>
 											</div>
 											
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{dsresto}" id="dsresto" name="dsresto"  maxlength="100" />
+													<input class="material-inputs" type="text" th:field="*{dsresto}" id="dsresto" name="dsresto"  maxlength="195" />
 													<label for="dsresto">Información adicional: </label>
 													<small th:if="${#fields.hasErrors('dsresto')}" th:errors="*{dsresto}" class="form-text text-danger"></small>
 												</div>
@@ -286,16 +314,16 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr th:each="p:${sucurbaNuevaModificada}">
-															<td th:text="${p.banco.dsbanco}"></td>
-															<td th:text="${p.banco.cdbanco}"></td>
-															<td th:text="${p.cdsucur}"></td>
-															<td th:text="${p.cdbic}"></td>
-															<td th:text="${p.dsdomic}"></td>
-															<td th:text="${p.dsplaza}"></td>
-															<td th:text="${p.cdprov}"></td>
-															<td th:text="${p.cdnacion}"></td>
-															<td th:text="${p.dsresto}"></td>
+														<tr th:each="s:${sucurbaNuevaModificada}">
+															<td th:text="${s.banco.dsbanco}"></td>
+															<td th:text="${s.banco.cdbanco}"></td>
+															<td th:text="${s.cdsucur}"></td>
+															<td th:text="${s.cdbic}"></td>
+															<td th:text="${s.dsdomic}"></td>
+															<td th:text="${s.dsplaza}"></td>
+															<td th:text="${s.cdprov}"></td>
+															<td th:text="${s.cdnacion}"></td>
+															<td th:text="${s.dsresto}"></td>
 														</tr>    
 													</tbody>
 												</table>

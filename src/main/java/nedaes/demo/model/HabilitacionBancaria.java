@@ -64,7 +64,7 @@ public class HabilitacionBancaria implements Serializable{
 	@JoinColumns(foreignKey = @ForeignKey(name = "FK_TDELHAC2_THABILIT"), value = { @JoinColumn(name = "CDDELHAC", referencedColumnName = "CDDELHAC", nullable = false, insertable = false, updatable = false ) })	
 	private Delhac delhac;
 
-	@Pattern(regexp = "[0-9]{8}([A-Z]|[a-z]){1}", message = "Debe introducir un CIF/NIF con formato correcto")
+	@Pattern(regexp = "([A-Z]|[a-z]|[0-9]){1}[0-9]{7}([A-Z]|[a-z]){1}", message = "Debe introducir un CIF/NIF con formato correcto")
 	@NotNull(message = "El CIF/NIF no puede estar vacío")
 	@Column(name = "cdident", length = 10)
 	private String cdident;
@@ -77,7 +77,7 @@ public class HabilitacionBancaria implements Serializable{
 	private String otchetra;
 
 	@NotNull(message = "El CIF/NIF de la Delegacion de Hacienda no puede estar vacía")
-	@Pattern(regexp = "[0-9]{8}([A-Z]|[a-z]){1}", message = "Debe introducir un CIF/NIF con formato correcto")
+	@Pattern(regexp ="([A-Z]|[a-z]|[0-9]){1}[0-9]{7}([A-Z]|[a-z]){1}", message = "Debe introducir un CIF/NIF con formato correcto")
 	@Column(name = "cdhacien", length = 9)
 	private String cdhacien;
 

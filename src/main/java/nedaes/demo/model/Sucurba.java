@@ -30,7 +30,7 @@ public class Sucurba implements Serializable{
 	@JoinColumns(foreignKey = @ForeignKey(name = "FK_TBANCOS2_TSUCURBA"), value = {@JoinColumn(name = "CDBANCO", referencedColumnName = "CDBANCO", nullable = false, insertable = false, updatable = false )})	
 	private Banco banco;
 	
-    @Column(name="idtbancos", length=10)
+    @Column(name="idtbancos", length=5)
 	private Integer idbanco;
 	
 	@Column(name="CDBANCO", length=4)

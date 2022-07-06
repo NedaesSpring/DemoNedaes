@@ -152,8 +152,9 @@ public class HabilitacionPersonalServiceImpl implements IHabilitacionPersonalSer
 		habilitacion.setCdloc(habilitacion.getLocalid().getCdloc());
 
 		return habilitacionPersonalRepository.actualizarHabilitacionPersonal(habilitacion.getIdHabilitacion(), habilitacion.getCdhabil(),
-				habilitacion.getDsorg(), habilitacion.getDsorgext(), habilitacion.getDscentro(), cddelhac, cdprov, idsigdom, idbanco,
-				idlocalid, idsucurba, habilitacion.getCdsiglas(), habilitacion.getCdsucur(), habilitacion.getCdloc(),
+				habilitacion.getDsorg(), habilitacion.getDsorgext(), habilitacion.getDscentro(), 
+//				cddelhac, cdprov, idsigdom, idbanco, idlocalid, idsucurba, 
+				habilitacion.getCdsiglas(), habilitacion.getCdsucur(), habilitacion.getCdloc(),
 				habilitacion.getCdbanco(), habilitacion.getDscalle(), habilitacion.getDsnumero(), habilitacion.getCdpostal(),
 				habilitacion.getDshabil(), habilitacion.getDssuplen(),
 				habilitacion.getNombre() + ' ' + habilitacion.getApellido1() + ' ' + habilitacion.getApellido2(), habilitacion.getNombre(),
@@ -161,7 +162,8 @@ public class HabilitacionPersonalServiceImpl implements IHabilitacionPersonalSer
 				habilitacion.getNmfaxcert(), habilitacion.getCddnom(), habilitacion.getCddvar(), habilitacion.getCddrec(),
 				habilitacion.getOtcon10(), habilitacion.getOtc10_rdl202012(), habilitacion.getOtpacepro(), habilitacion.getCdraapp(),
 				habilitacion.getCdssperso(), habilitacion.getNmmaxanxaapp(), habilitacion.getNmaappanx(), habilitacion.getNmmaxanxdes(),
-				habilitacion.getOttelcon1(), habilitacion.getOtrecibi(), habilitacion.getCddnisigp(), habilitacion.getCdususigp());
+//				habilitacion.getOttelcon1(), 
+				habilitacion.getOtrecibi(), habilitacion.getCddnisigp(), habilitacion.getCdususigp());
 	}
 
 	

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import nedaes.demo.model.Banco;
 import nedaes.demo.model.Perceptor;
 import nedaes.demo.model.Provinc;
 import nedaes.demo.model.Sucurba;
@@ -42,13 +43,20 @@ public class SucurbaServiceImpl implements ISucurbaService {
 	}
 	
 	
-	
 	@Override
 	public Sucurba findBySucurbaNombre(String sucurbaNombre) { return new Sucurba();};
 	
-	@Override
-	public Sucurba insertarSucurba(Sucurba sucurba) { return new Sucurba();};
 
+	@Override
+	public Sucurba insertarSucurba(Sucurba sucurba) 
+	{ 
+		
+		Sucurba sucurbaInsertada = sucurbaRepository.save(sucurba);
+		return sucurbaInsertada;
+	
+	}
+	
+	
 	@Override
 	public List<Sucurba> listarSucurbas() { return new ArrayList<Sucurba>();};
 	

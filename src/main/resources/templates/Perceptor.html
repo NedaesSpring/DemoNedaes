@@ -76,8 +76,8 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{apellidos}" disabled/>
-													<label for="apellidos">Primer apellido: </label>
+													<input class="material-inputs" type="text" th:field="*{dsapell1}" disabled/>
+													<label for="dsapell1">Primer apellido: </label>
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -149,9 +149,15 @@
 										    <div class="col-md-4">
 												<div class="form-group">
 													<input class="material-inputs" type="text" th:field="*{cdforpag}" disabled/>
-													<label for="cdforpag">FORPAG: </label>
+													<label for="cdforpag">FORMA PAGO: </label>
 												</div>
 											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdsiglas}" disabled/>
+													<label for="cdsiglas">TIPO VIA: </label>
+												</div>
+											</div>											
 											<div class="col-md-4">
 												<div class="form-group">
 													<input class="material-inputs" type="text" th:field="*{dsviapub}" disabled/>
@@ -164,12 +170,6 @@
 													<label for="cdnumero">Nº: </label>
 												</div>
 											</div>	
-											<div class="col-md-4">
-												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdsiglas}" disabled/>
-													<label for="cdsiglas">SIGDOM: </label>
-												</div>
-											</div>											
 										</div>
 										<br>
 										<div class="row">
@@ -183,6 +183,7 @@
 									
 									<!-- Añadir o Editar -->
 									<div class="panel-info container" th:unless="${consultar == 'si'}"><!-- consultar = no -->
+										<input type="hidden" name="cdprov" id="cdprov " th:field="*{cdprov}" />
 									
 										<div class="row" >
 											<div class="col-md-4">
@@ -194,8 +195,8 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{apellidos}" id="apellidos" name="apellidos" maxlength="22"/>
-													<label for="apellidos">Primer apellido: </label>
+													<input class="material-inputs" type="text" th:field="*{dsapell1}" id="apellidos" name="dsapell1" maxlength="22"/>
+													<label for="dsapell1">Primer apellido: </label>
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -204,31 +205,11 @@
 													<label for="dsapell2">Segundo apellido: </label>
 												</div>
 											</div>
-											<div class="col-md-4">
-												<div class="form-group" th:if="${provincia == null}">
-													<select id="provincia" name="provincia" th:field="*{provincia}"class="user-form-control">
-														<option th:value="0">--Seleccione provincia--</option>
-														<option th:each="p : ${provincias}"
-																				th:value="${p.idProvincia}"
-																				th:attr="choiceid=${p.idProvincia}"
-																				th:text="${p.dsprov}" />
-													</select> <label for="provincia">Provincia: </label>
-												</div>
-												<div class="form-group" th:if="${provincia != null}">
-													<select id="provincia" name="provincia" class="user-form-control">
-														<option th:value="0">--Seleccione provincia--</option>
-														<option th:each="p : ${provincias}"
-																				th:value="${p.idProvincia}"
-																				th:attr="selected = (${provincia} == ${p.idProvincia})"
-																				th:text="${p.dsprov}" />
-													</select> <label for="Provincia">Provincia: </label>
-												</div>
-											</div>
 										</div>
 										<div class="row" >
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{dni}" id="dni" name="dni" maxlength="10" required/>
+													<input class="material-inputs" type="text" th:field="*{dni}" id="dni" name="dni" maxlength="10" required disabled/>
 													<label for="dni">DNI: *</label>
 												</div>
 											</div>
@@ -240,55 +221,24 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{dup}" id="dup" name="dup" maxlength="1"/>
+													<input class="material-inputs" type="text" th:field="*{dup}" id="dup" name="dup" maxlength="1" disabled/>
 													<label for="dup">DUP: </label>
 												</div>
 											</div>																					
 										</div>
 										<div class="row" >
-																						
 											<div class="col-md-4">
-												<div class="form-group" th:if="${clasenomina == null}">
-													<select id="clasenomina" name="clasenomina" th:field="*{clasenomina}"class="user-form-control">
-														<option th:value="0">--Seleccione Clase de Nómina--</option>
-														<option th:each="c : ${clasenominas}"
-																				th:value="${c.idClasenomina}"
-																				th:attr="choiceid=${c.idClasenomina}"
-																				th:text="${c.dsclasnm}" />
-													</select> <label for="clasenomina">Clase de Nómina: </label>
-												</div>
-												<div class="form-group" th:if="${clasenomina != null}">
-													<select id="clasenomina" name="clasenomina" class="user-form-control">
-														<option th:value="0">--Seleccione Clase de Nómina--</option>
-														<option th:each="c : ${clasenominas}"
-																				th:value="${c.idClasenomina}"
-																				th:attr="selected = (${clasenomina.getIdClasenomina()} == ${c.idClasenomina})"
-																				th:text="${c.dsclasnm}" />
-													</select> <label for="clasenomina">Clase de Nómina: </label>
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{clasenomina.dsclasnm}" disabled/>
+													<label for="clasenomina">CLASE NOMINA: </label>
 												</div>
 											</div>
-											
 											<div class="col-md-4">
-												<div class="form-group" th:if="${habilitacion == null}">
-													<select id="habilitacion" name="habilitacion" th:field="*{habilitacion}"class="user-form-control">
-														<option th:value="0">--Seleccione Habilitación--</option>
-														<option th:each="h : ${habilitaciones}"
-																				th:value="${h.idHabilitacion}"
-																				th:attr="choiceid=${h.idHabilitacion}"
-																				th:text="${h.cdhabil}" />
-													</select> <label for="habilitacion">Habilitación: </label>
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{habilitacion.cdhabil}" disabled/>
+													<label for="habilitacion">HABILITACION: </label>
 												</div>
-												<div class="form-group" th:if="${habilitacion != null}">
-													<select id="habilitacion" name="habilitacion" class="user-form-control">
-														<option th:value="0">--Seleccione Habilitación--</option>
-														<option th:each="h: ${habilitaciones}"
-																				th:value="${h.idHabilitacion}"
-																				th:attr="selected = (${habilitacion} == ${h.idHabilitacion})"
-																				th:text="${h.cdhabil}" />
-													</select> <label for="habilitacion">Habilitación: </label>
-												</div>
-											</div>
-											
+											</div>									
 											<div class="col-md-4">
 												<div class="form-group" th:if="${banco == null}">
 													<select id="banco" name="banco" th:field="*{bperban.banco}"class="user-form-control">
@@ -311,24 +261,60 @@
 											</div>
 										</div>
 										<div class="row" >
+											<div class="col-md-4">   
+												<div class="form-group">														
+											    	<select id="cdsexo" name="cdsexo" th:field="*{cdsexo}" class="user-form-control">
+											        	<option value="V">V-VARON</option>
+														<option value="M">M-MUJER</option>
+													</select>
+													<label for="cdsexo">SEXO: * </label>
+													<small th:if="${#fields.hasErrors('cdsexo')}" th:errors="*{cdsexo}" class="form-text text-danger"></small>													
+												</div>
+											</div>
+											<div class="col-md-4">   
+												<div class="form-group">														
+											    	<select id="cddomnot" name="cddomnot" th:field="*{cddomnot}" class="user-form-control">
+											        	<option value="1">DOMICILIO DEL PERCEPTOR</option>
+														<option value="2">DOMICILIO DEL PUESTO DE TRABAJO</option>
+													</select>
+													<label for="cddomnot">DOMICILIO: * </label>
+													<small th:if="${#fields.hasErrors('cddomnot')}" th:errors="*{cddomnot}" class="form-text text-danger"></small>													
+												</div>
+											</div>
+											<div class="col-md-4">   
+												<div class="form-group">														
+											    	<select id="cdforpag" name="cdforpag" th:field="*{cdforpag}" class="user-form-control">
+											        	<option value="C">CHEQUE</option>
+														<option value="T">TRANSFERENCIA</option>
+														<option value="X">RET.JUDICIALES:CHEQUE/TRANSF.POR HABILIT.(P12/P13)</option>
+														<option value="Z">RET.JUDICIALES:CHEQUE/TRASNF.CINTA COMPL.(P12/P13)</option>
+													</select>
+													<label for="cdforpag">FORMA PAGO: * </label>
+													<small th:if="${#fields.hasErrors('cdforpag')}" th:errors="*{cdforpag}" class="form-text text-danger"></small>													
+												</div>
+											</div>
+										</div>
+										<div class="row" >											
 											<div class="col-md-4">
-												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdsexo}" id="cdsexo" name="cdsexo" maxlength="1" required/>
-													<label for="cdsexo">SEXO: </label>
+												<div class="form-group" th:if="${sigdom == null}">
+													<select id="habilitacion" name="sigdom" th:field="*{sigdom}"class="user-form-control">
+														<option th:value="0">--Seleccione tipo vía--</option>
+														<option th:each="s : ${sigdoms}"
+																				th:value="${s.idsigdom}"
+																				th:attr="choiceid=${s.idsigdom}"
+																				th:text="${s.dssiglas}" />
+													</select> <label for="sigdom">Tipo vía: </label>
 												</div>
-											</div>
-											<div class="col-md-4">
-												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cddomnot}" id="cddomnot" name="cddomnot" maxlength="1" required/>
-													<label for="cddomnot ">DOMICILIO: </label>
+												<div class="form-group" th:if="${sigdom != null}">
+													<select id="sigdom" name="sigdom" class="user-form-control">
+														<option th:value="0">--Seleccione tipo vía--</option>
+														<option th:each="s : ${sigdoms}"
+																				th:value="${s.idsigdom}"
+																				th:attr="selected = (${sigdom.getIdsigdom()} == ${s.idsigdom})"
+																				th:text="${s.dssiglas}" />
+													</select> <label for="sigdom">Tipo vía: </label>
 												</div>
-											</div>
-										    <div class="col-md-4">
-												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdforpag}" id="cdforpag" name="cdforpag" maxlength="1" required/>
-													<label for="cdforpag">FORPAG: </label>
-												</div>
-											</div>
+											</div>																				
 											<div class="col-md-4">
 												<div class="form-group">
 													<input class="material-inputs" type="text" th:field="*{dsviapub}" id="dsviapub" name="dsviapub" maxlength="30" required/>
@@ -340,24 +326,79 @@
 													<input class="material-inputs" type="text" th:field="*{cdnumero}" id="cdnumero" name="cdnumero" maxlength="5" required/>
 													<label for="cdnumero">Nº: </label>
 												</div>
-											</div>										
-											<div class="col-md-4">
-												<div class="form-group">
-													<input class="material-inputs" type="text" th:field="*{cdsiglas}" id="cdsiglas" name="cdsiglas" maxlength="2" required/>
-													<label for="cdsiglas">SIGDOM: </label>
-												</div>
-											</div>										
+											</div>		
 										</div>
-										<input type="hidden" name="cdprov" id="cdprov " th:field="*{cdprov}" />
-									
-																					
-										<!-- Si hay error al insertar un perceptor que ya existe -->
-											<div class="col-md-8" th:if="${mensajeError != null}">
-												<div class="form-group">
-													<p th:text="${mensajeError}" class="form-text text-danger"></p>
+										<div class="row">
+										 	<div class="col-md-4" style="visibility:hidden;">
+												<div class="form-group" th:if="${clasenomina == null}">
+													<select id="clasenomina" name="clasenomina" th:field="*{clasenomina}"class="user-form-control">
+														<option th:value="0">--Seleccione Clase de Nómina--</option>
+														<option th:each="c : ${clasenominas}"
+																				th:value="${c.idClasenomina}"
+																				th:attr="choiceid=${c.idClasenomina}"
+																				th:text="${c.dsclasnm}" />
+													</select> <label for="clasenomina">Clase de Nómina: </label>
+												</div>
+												<div class="form-group" th:if="${clasenomina != null}">
+													<select id="clasenomina" name="clasenomina" class="user-form-control">
+														<option th:value="0">--Seleccione Clase de Nómina--</option>
+														<option th:each="c : ${clasenominas}"
+																				th:value="${c.idClasenomina}"
+																				th:attr="selected = (${clasenomina.getIdClasenomina()} == ${c.idClasenomina})"
+																				th:text="${c.dsclasnm}" />
+													</select> <label for="clasenomina">Clase de Nómina: </label>
 												</div>
 											</div>
 											
+											<div class="col-md-4" style="visibility:hidden;">
+												<div class="form-group" th:if="${habilitacion == null}">
+													<select id="habilitacion" name="habilitacion" th:field="*{habilitacion}"class="user-form-control">
+														<option th:value="0">--Seleccione Habilitación--</option>
+														<option th:each="h : ${habilitaciones}"
+																				th:value="${h.idHabilitacion}"
+																				th:attr="choiceid=${h.idHabilitacion}"
+																				th:text="${h.cdhabil}" />
+													</select> <label for="habilitacion">Habilitación: </label>
+												</div>
+												<div class="form-group" th:if="${habilitacion != null}">
+													<select id="habilitacion" name="habilitacion" class="user-form-control">
+														<option th:value="0">--Seleccione Habilitación--</option>
+														<option th:each="h: ${habilitaciones}"
+																				th:value="${h.idHabilitacion}"
+																				th:attr="selected = (${habilitacion.getIdHabilitacion()} == ${h.idHabilitacion})"
+																				th:text="${h.cdhabil}" />
+													</select> <label for="habilitacion">Habilitación: </label>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group" th:if="${provincia == null}">
+													<select id="provincia" name="provincia" th:field="*{provincia}"class="user-form-control">
+														<option th:value="0">--Seleccione provincia--</option>
+														<option th:each="p : ${provincias}"
+																				th:value="${p.idProvincia}"
+																				th:attr="choiceid=${p.idProvincia}"
+																				th:text="${p.dsprov}" />
+													</select> <label for="provincia">Provincia: </label>
+												</div>
+												<div class="form-group" th:if="${provincia != null}">
+													<select id="provincia" name="provincia" class="user-form-control">
+														<option th:value="0">--Seleccione provincia--</option>
+														<option th:each="p : ${provincias}"
+																				th:value="${p.idProvincia}"
+																				th:attr="selected = (${provincia.getIdProvincia()} == ${p.idProvincia})"
+																				th:text="${p.dsprov}" />
+													</select> <label for="Provincia">Provincia: </label>
+												</div>
+											</div>
+										</div>
+										
+										
+										<!-- Si hay error al insertar un perceptor que ya existe -->
+										<div class="col-md-8" th:if="${mensajeError != null}">
+											<div class="form-group">
+												<p th:text="${mensajeError}" class="form-text text-danger"></p>
+											</div>
+										</div>
 										<br>
 										<p>* Campo obligatorio</p>
 										<br>
@@ -376,7 +417,6 @@
 							<div class="panel-body">
 							  	<div class="panel-info container">
 									<div class="row">
-										<div class="col-md-12">
 											<div class="table-responsive">
 												<table class="ma-table table">
 													<thead>
@@ -390,13 +430,19 @@
 											                <th>DUP</th>
 											                <th>CLASE NOMINA</th>
 											                <th>HABILITACION</th>  
-											                <th>BANCO</th>  
+											                <th>BANCO</th>
+											                <th>SEXO</th>  
+											                <th>DOMNOT</th>  
+											                <th>FORMA PAGO</th>  
+											                <th>TIPO VIA</th>    
+											                <th>VIA</th>    
+											                <th>NUMERO</th>    
 														</tr>
 													</thead>
 													<tbody>
 														<tr th:each="p:${perceptorNuevoModificado}">
 															<td th:text="${p.nombre}"></td>
-															<td th:text="${p.apellidos}"></td>
+															<td th:text="${p.dsapell1}"></td>
 															<td th:text="${p.dsapell2}"></td>
 															<td th:text="${p.provincia.dsprov}"></td>
 															<td th:text="${p.bperadm.cdsitnom}"></td>
@@ -405,6 +451,12 @@
 															<td th:text="${p.clasenomina.dsclasnm}"></td>
 															<td th:text="${p.habilitacion.cdhabil}"></td>
 															<td th:text="${p.bperban.banco.dsbanco}"></td>
+															<td th:text="${p.cdsexo}"></td>
+															<td th:text="${p.cddomnot}"></td>
+															<td th:text="${p.cdforpag}"></td>
+															<td th:text="${p.sigdom.cdsiglas}"></td>
+															<td th:text="${p.dsviapub}"></td>
+															<td th:text="${p.cdnumero}"></td>
 														</tr>    
 													</tbody>
 												</table>
@@ -414,7 +466,6 @@
 							  	</div>	
 							</div>
 						</div>						
-					  </div>
 					</div>	
 				</div>
 			</div>

@@ -66,8 +66,14 @@
 														</div>
 														<div class="col-md-4">
 															<div class="form-group">
-																<input class="material-inputs" type="text" th:value="${apellidos}" id="apellidos" name="apellidos" /> 
-																<label for="apellidos">Apellidos: </label>
+																<input class="material-inputs" type="text" th:value="${dsapell1}" id="dsapell1" name="dsapell1" /> 
+																<label for="dsapell1">1º Apellido: </label>
+															</div>
+														</div>
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:value="${dsapell2}" id="dsapell2" name="dsapell2" /> 
+																<label for="dsapell2">2º Apellido: </label>
 															</div>
 														</div>
 														<div class="col-md-4">
@@ -91,8 +97,6 @@
 																</select> <label for="provincia">Provincia: </label>
 															</div>
 														</div>
-													</div>
-													<div class="row">
 														<div class="col-md-4">
 															<div class="form-group">
 																<input class="material-inputs" type="text" th:value="${dni}" id="dni" name="dni" /> 
@@ -119,8 +123,9 @@
 																		th:text="${s.cdsitnom}"/>
 																</select> <label for="bperadm">Sit: </label>
 															</div>
+														</div>
 -->													
-													<!--  														<div class="col-md-4">
+<!--  													<div class="col-md-4">
 															<div class="form-group">
 																<input class="material-inputs" type="text" th:value="${sit}" id="sit" name="sit" /> 
 																<label for="sit">Sit: </label>
@@ -222,10 +227,11 @@
 																	<table class="ma-table table">
 																		<thead>
 																			<tr>
-																				<th>Nombre</th>
-																				<th>Apellidos</th>
+																				<th>NOMBRE</th>
+																				<th>1º APELLIDO</th>
+																				<th>2º APELLIDO</th>
 																				<th>DNI</th>
-																				<th>Provincia</th>
+																				<th>PROVINCIA</th>
  																				<th>SIT</th>
 																				<th>DUP</th>
 																				<th>CLASE NOMINA</th>
@@ -237,7 +243,8 @@
 																		<tbody>
 																			<tr th:each="per : ${listado}">
 																				<td th:text="${per.nombre}"></td>
-																				<td th:text="${per.apellidos}"></td>
+																				<td th:text="${per.dsapell1}"></td>
+																				<td th:text="${per.dsapell2}"></td>
 																				<td th:text="${per.Dni}"></td>
 																				<td th:text="${per.Provincia.dsprov}"></td>
 																				<div th:unless="${per.bperadm  == null}" ><td th:text="${per.bperadm.cdsitnom}"></td></div><div th:if="${per.bperadm == null}" ><td></td></div>																				

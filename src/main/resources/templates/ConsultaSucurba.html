@@ -14,6 +14,25 @@
 </head>
 
 <body>
+<body>
+<script th:inline="javascript">
+function CargarLocalidades() {	
+	$("#localid").load("/nedaes/ListarLocalidProvincPersonalEdit",  $("#provinc").serialize());
+}
+
+function validarBancoSel(idbanco) {	
+	alert('Estoy');
+	if (idbanco === "")
+		if (document.fPro.cdbanco.value === "");
+			alert('No se puede crear un nueva sucursal sin elegir un banco');
+		else
+			document.fPro.action = '/nedaes/sucurba?cdbanco=' + document.fPro.cdbanco.value ; document.fPro.method='get'; document.fPro.submit();
+	else	alert(idbanco);
+			
+}
+
+</script>
+
 	<!-- Header -->
 	<div th:replace="Header.html :: header"></div>
 
@@ -51,6 +70,7 @@
 								<!-- CONTENIDO -->
 								<form th:action="@{/consultaSucurba}"
 									enctype="multipart/form-data" name="fPro" id="fPro" th:object="${sucurba}" >
+								
 									<div>
 										<div class="panel">
 											<div class="title-container">
@@ -84,8 +104,7 @@
 													<div class="row">
 														<div class="col-md-4 text-center">
 															<div class="form-group">
-																<a type="button" class="btn btn-success"
-																	th:href="@{/sucurba}">Nuevo</a>
+																<a type="button" class="btn btn-success" th:href="@{/sucurba?(idbanco=${idbanco})}">Nueva</a>
 															</div>
 														</div>
 														<div class="col-md-4 text-center">

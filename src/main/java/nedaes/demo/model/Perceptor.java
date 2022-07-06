@@ -28,7 +28,7 @@ public class Perceptor implements Serializable{
 	private String nombre;
 
 	@Column(name="DSAPELL1", length=22)
-	private String apellidos;
+	private String dsapell1;
 	
 	@Column(name="DSAPELL2", length=22)
 	private String dsapell2;
@@ -65,6 +65,15 @@ public class Perceptor implements Serializable{
 
 	@Column(name="CDSIGLAS", length=2)	
 	private String cdsiglas;
+	
+	@Column(name="IDTCLASNOM")	
+	private Integer idtclasnom;
+	
+	@Column(name="IDTPROVINC")	
+	private Integer idtprovinc;
+	
+	@Column(name="IDTHABILIT")	
+	private Integer idthabilit;
 	
 //	@JoinColumns(foreignKey = @ForeignKey(name = "FK_TCLASNOM_BPERSONA"), value = {@JoinColumn(name = "IDTCLASNOM", referencedColumnName = "IDTCLASNOM") })	
 //	@NotNull(message = "El campo clase nomina no pueden estar vacío.")
@@ -108,22 +117,27 @@ public class Perceptor implements Serializable{
 */	
 	private Bperban bperban;
     
+	//foreign key q relaciona cdsiglas de habilitacion con cdsiglas de la tabla sigdom
+//	@JoinColumns(foreignKey = @ForeignKey(name = "FK_TSIGDOM_HABILIT"), value = { @JoinColumn(name = "IDTSIGDOM", referencedColumnName = "IDTSIGDOM") })	
+	@NotNull(message="El tipo vía no puede estar vacía")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumns(foreignKey = @ForeignKey(name = "FK_TSIGDOM2_BPERSONA"), value = { @JoinColumn(name = "CDSIGLAS", referencedColumnName = "CDSIGLAS", nullable = false, insertable = false, updatable = false ) })	
+	private Sigdom sigdom;
+    
 	public Perceptor() {
 		super();
 	}
 
-	
-
-	public Perceptor(Integer idPerceptor, String nombre, String apellidos, String dsapell2, String dni, String cn,
+	public Perceptor(Integer idPerceptor, String nombre, String dsapell1, String dsapell2, String dni, String cn,
 			String dup, String hab, String cdprov, String cdsexo, String cddomnot, String cdforpag, String cdnumero,
-			String dsviapub, String cdsiglas, Clasenomina clasenomina,
-			@NotNull(message = "El campo Provincia no puede estar vacío.") Provinc provincia,
+			String dsviapub, String cdsiglas, Integer idtclasnom, Integer idtprovinc, Integer idthabilit,
+			Clasenomina clasenomina, @NotNull(message = "El campo Provincia no puede estar vacío.") Provinc provincia,
 			@NotNull(message = "El campo Habilitacion no puede estar vacío.") HabilitacionInicial habilitacion,
-			Bperadm bperadm, Bperban bperban) {
+			Bperadm bperadm, Bperban bperban, @NotNull(message = "El tipo vía no puede estar vacía") Sigdom sigdom) {
 		super();
 		this.idPerceptor = idPerceptor;
 		this.nombre = nombre;
-		this.apellidos = apellidos;
+		this.dsapell1 = dsapell1;
 		this.dsapell2 = dsapell2;
 		this.dni = dni;
 		this.cn = cn;
@@ -136,14 +150,16 @@ public class Perceptor implements Serializable{
 		this.cdnumero = cdnumero;
 		this.dsviapub = dsviapub;
 		this.cdsiglas = cdsiglas;
+		this.idtclasnom = idtclasnom;
+		this.idtprovinc = idtprovinc;
+		this.idthabilit = idthabilit;
 		this.clasenomina = clasenomina;
 		this.provincia = provincia;
 		this.habilitacion = habilitacion;
 		this.bperadm = bperadm;
 		this.bperban = bperban;
+		this.sigdom = sigdom;
 	}
-
-
 
 	public Integer getIdPerceptor() {
 		return idPerceptor;
@@ -161,12 +177,12 @@ public class Perceptor implements Serializable{
 		this.nombre = nombre;
 	}
 
-	public String getApellidos() {
-		return apellidos;
+	public String getDsapell1() {
+		return dsapell1;
 	}
 
-	public void setApellidos(String apellidos) {
-		this.apellidos = apellidos;
+	public void setDsapell1(String dsapell1) {
+		this.dsapell1 = dsapell1;
 	}
 
 	public String getDsapell2() {
@@ -358,18 +374,46 @@ public class Perceptor implements Serializable{
 		this.cdsiglas = cdsiglas;
 	}
 
+	public Sigdom getSigdom() {
+		return sigdom;
+	}
 
+	public void setSigdom(Sigdom sigdom) {
+		this.sigdom = sigdom;
+	}
+
+	public Integer getIdtclasnom() {
+		return idtclasnom;
+	}
+
+	public void setIdtclasnom(Integer idtclasnom) {
+		this.idtclasnom = idtclasnom;
+	}
+
+	public Integer getIdtprovinc() {
+		return idtprovinc;
+	}
+
+	public void setIdtprovinc(Integer idtprovinc) {
+		this.idtprovinc = idtprovinc;
+	}
+
+	public Integer getIdthabilit() {
+		return idthabilit;
+	}
+
+	public void setIdthabilit(Integer idthabilit) {
+		this.idthabilit = idthabilit;
+	}
 
 	@Override
 	public String toString() {
-		return "Perceptor [idPerceptor=" + idPerceptor + ", nombre=" + nombre + ", apellidos=" + apellidos
+		return "Perceptor [idPerceptor=" + idPerceptor + ", nombre=" + nombre + ", dsapell1=" + dsapell1
 				+ ", dsapell2=" + dsapell2 + ", dni=" + dni + ", cn=" + cn + ", dup=" + dup + ", hab=" + hab
 				+ ", cdprov=" + cdprov + ", cdsexo=" + cdsexo + ", cddomnot=" + cddomnot + ", cdforpag=" + cdforpag
-				+ ", cdnumero=" + cdnumero + ", dsviapub=" + dsviapub + ", cdsiglas=" + cdsiglas + ", clasenomina="
+				+ ", cdnumero=" + cdnumero + ", dsviapub=" + dsviapub + ", cdsiglas=" + cdsiglas + ", idtclasnom="
+				+ idtclasnom + ", idtprovinc=" + idtprovinc + ", idthabilit=" + idthabilit + ", clasenomina="
 				+ clasenomina + ", provincia=" + provincia + ", habilitacion=" + habilitacion + ", bperadm=" + bperadm
-				+ ", bperban=" + bperban + "]";
+				+ ", bperban=" + bperban + ", sigdom=" + sigdom + "]";
 	}
-     
-	
-     
 }
