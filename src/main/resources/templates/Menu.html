@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div th:fragment="menuNedaes">
+		<div class="sidebar-nav" sec:authorize="isAuthenticated()">
+			<ul class="nav">
+				<li class="open">
+					<h2>
+						<a href="/nedaes">Nedaes</a>
+					</h2>
+					<ul>
+					    <li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Tablas Aplicación</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/consultaTodosBancos}">Bancos</a> 
+							</div></li>
+					    <li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Nómina Básica</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/cambioDnis}">Cambio de DNI</a> 
+							</div></li>
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Provincias</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/provincia}">Alta de Provincia</a> 
+								<a class="dropdown-item" th:href="@{/provincias}">Consulta de Provincias</a> 
+								<a class="dropdown-item" th:href="@{/consultaTodasProvincias}">Todas las Provincias</a> 
+								<a class="dropdown-item" th:href="@{/listarProvincias}">Lista Provincias básica</a> 
+							</div></li>
+						<li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Perceptores</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/perceptor}">Alta de Perceptor</a> 
+								<a class="dropdown-item" th:href="@{/perceptores}">Consulta de Perceptores</a> 
+								<a class="dropdown-item" th:href="@{/consultaTodosPerceptores}">Todos los Perceptores</a> 
+								<a class="dropdown-item" th:href="@{/listarPerceptores}">Lista Perceptores básica</a>
+							</div></li>
+							
+						<li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Habilitaciones</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/habilitacion}">Alta de Habilitación</a> 
+								<a class="dropdown-item" th:href="@{/habilitaciones}">Consulta de Habilitaciones</a> 
+								<a class="dropdown-item" th:href="@{/consultaTodasHabilitaciones}">Todos las Habilitaciones</a> 
+
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">InformesPDF</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/Informes/1}" download>Informes SSn1</a>
+								<a class="dropdown-item" th:href="@{/Informes/2}" download>Informes PAn2</a>
+								<a class="dropdown-item" th:href="@{/Informes/3}" download>Informes Reporte</a>
+								<a class="dropdown-item" th:href="@{/InformesMasivo/1/2}" download>Informes SSn1 masivo</a>
+							</div></li>
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+							role="button" aria-haspopup="true" aria-expanded="false">Gesti&oacute;n
+								de la aplicaci&oacute;n</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/docs/MANUAL_USUARIO_NEDAES.pdf}" download>Ayuda PDF</a>
+							</div></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

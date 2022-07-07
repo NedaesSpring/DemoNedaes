@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport">
+<title>PROVINCIAS</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<link th:href="@{/css/style-magrama-rwd.css}" rel="stylesheet" />
+<link th:href="@{/css/estilo.css}" rel="stylesheet" />
+</head>
+
+<body>
+	<!-- Header -->
+	<div th:replace="Header.html :: header"></div>
+
+	<!-- End Header -->
+
+	<!-- Container -->
+	<div class="container">
+		<!-- contenido de la página -->
+		<div class="col-md-12">
+			<div class="row clearfix">
+				<div class="migas">
+					<ul>
+						<li xmlns:myobj="mgm:component-link"><a
+							href="https://portal.mineco.gob.es/">Inicio</a></li>
+						<li><b>Provincias</b></li>
+					</ul>
+				</div>
+				<div class="col-md-12" id="main">
+					<!-- contenedor principal -->
+					<div class="row row-offcanvas row-offcanvas-left">
+						<div class="col-xs-0 col-sm-3 col-md-3 sidebar-offcanvas"
+							id="sidebar" role="navigation">
+							<div th:replace="Menu.html :: menuNedaes"></div>
+						</div>
+						<!-- /sidebar offcanvas -->
+						<div class="col-xs-12 col-sm-9 col-md-9 contenido">
+							<h2 class="pestana-titulo col-md-9">Provincias</h2>
+
+							<span class="pestana-flecha"></span>
+
+
+							<!-- Fin Barra de herramientas -->
+							<div class="col-md-12 contenido subhome-new">
+
+					<!-- CONTENIDO -->
+					<div>
+					  	<div class="panel">
+							<div class="title-container" th:if="${aniadir == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Añadir</h3>			
+							</div>
+							<div class="title-container" th:if="${editar == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Modificar</h3>			
+							</div>
+							<div class="title-container" th:if="${consultar == 'si'}">
+								<h3 id="ancla0" class="ma-panel-title">Consultar</h3>			
+							</div>
+							<form th:action="@{/insertarModificarProvincia}" enctype="multipart/form-data" th:object="${provinc}" id="provinc" name="provinc">
+								<input type="hidden" name="idProvincia" id="idProvincia" th:field="*{idProvincia}" />
+								<div class="panel-body">
+									<!-- Consultar -->
+									<div class="panel-info container" th:if="${consultar == 'si'}">
+								
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsprov}" disabled/>
+													<label for="dsprov">Provincia: </label>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdprov}" disabled/>
+													<label for="cdprov">Código de provincia: </label>
+												</div>
+											</div>
+										</div>
+										<br>
+										<div class="row">
+											<div >
+												<div class="form-group">
+													<a th:href="@{provincias}" class="btn btn-primary">Volver</a>  
+												</div>
+											</div>
+										</div>
+									</div> <!-- Consultar -->
+									
+									<!-- Añadir o Editar -->
+									<div class="panel-info container" th:unless="${consultar == 'si'}"><!-- consultar = no -->
+									
+										<div class="row" >
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{dsprov}" id="dsprov" name="dsprov" maxlength="35" required/>
+													<label for="dsprov">Provincia: *</label>
+													<small th:if="${#fields.hasErrors('dsprov')}" th:errors="*{dsprov}" class="form-text text-danger"></small>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<input class="material-inputs" type="text" th:field="*{cdprov}" id="cdprov" name="cdprov" required/>
+													<label for="cdprov">Código de provincia: * </label>
+												</div>
+											</div>
+										</div>
+										
+										<!-- Si hay error al insertar una provincia que ya existe -->
+											<div class="col-md-8" th:if="${mensajeError != null}">
+												<div class="form-group">
+													<p th:text="${mensajeError}" class="form-text text-danger"></p>
+												</div>
+											</div>
+											
+										<br>
+										<p>* Campo obligatorio</p>
+										<br>
+										
+										<div class="row">
+											<div class="col-md-4 text-center" th:if="${editar == 'si' || aniadir == 'si'}">											
+												<input type="submit" class="btn btn-primary">
+												<a th:href="@{provincias}" class="btn btn-primary">Volver</a> 
+											</div>									
+										</div>
+									</div>	<!-- Añadir o Editar -->
+								</div>	
+							</form>
+							<br>
+							<div class="panel" th:if="${mostrarTabla == 'si'}">
+							<div class="panel-body">
+							  	<div class="panel-info container">
+									<div class="row">
+										<div class="col-md-8">
+											<div class="table-responsive">
+												<table class="ma-table table">
+													<thead>
+														<tr>
+															<th>Provincia</th>
+											                <th>Código de provincia</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="p:${provinciaNuevaModificada}">
+															<td th:text="${p.dsprov}"></td>
+															<td th:text="${p.cdprov}"></td>
+														</tr>    
+													</tbody>
+												</table>
+											</div>	<!-- class="table-responsive" -->
+										</div>
+									</div> 
+							  	</div>	
+							</div>
+						
+						</div>	
+						</div>						
+					
+					</div>
+					
+				</div>
+				<div class="col-md-12">
+					
+				</div>
+			</div>
+		</div>
+	</div> <!-- main cierra col-md-9 contenido -->
+			</div> <!-- main cierra row-offcanvas-left -->
+		  </div>  <!-- main cierra col-md-12 main-->
+		</div><!-- cierra row -->
+
+		<!-- Cierre containeer -->
+
+	<!-- Footer -->
+	<div th:replace="Footer.html :: pie"></div>
+	<!-- End Footer -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script th:src="@{/js/script.js}"></script>
+	
+
+</body>
+
+</html>
