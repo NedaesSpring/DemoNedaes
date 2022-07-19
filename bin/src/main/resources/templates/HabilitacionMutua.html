@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport">
+<title>HABILITACIONES MUTUA</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<link th:href="@{/css/style-magrama-rwd.css}" rel="stylesheet" />
+<link th:href="@{/css/estilo.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<!-- Header -->
+	<div th:replace="Header.html :: header"></div>
+
+	<!-- End Header -->
+
+	<!-- Container -->
+	<div class="container">
+		<!-- contenido de la página -->
+		<div class="col-md-12">
+			<div class="row clearfix">
+				<div class="migas">
+					<ul>
+						<li xmlns:myobj="mgm:component-link"><a
+							href="https://portal.mineco.gob.es/">Inicio</a></li>
+						<li><b>Habilitación Mutua</b></li>
+					</ul>
+				</div>
+				<div class="col-md-12" id="main">
+					<!-- contenedor principal -->
+					<div class="row row-offcanvas row-offcanvas-left">
+						<div class="col-xs-0 col-sm-3 col-md-3 sidebar-offcanvas"
+							id="sidebar" role="navigation">
+							<div th:replace="Menu.html :: menuNedaes"></div>
+						</div>
+						<!-- /sidebar offcanvas -->
+						<div class="col-xs-12 col-sm-9 col-md-9 contenido">
+							<h2 class="pestana-titulo col-md-9">Habilitaciones de datos
+								de Mutuas</h2>
+
+							<span class="pestana-flecha"></span>
+
+
+							<!-- Fin Barra de herramientas -->
+							<div class="col-md-12 contenido subhome-new">
+
+								<!-- CONTENIDO -->
+								<div>
+									<div class="panel">
+										<div class="title-container" th:if="${aniadir == 'si'}">
+											<h3 id="ancla0" class="ma-panel-title">Añadir</h3>
+										</div>
+										<div class="title-container" th:if="${editar == 'si'}">
+											<h3 id="ancla0" class="ma-panel-title">Modificar</h3>
+										</div>
+										<div class="title-container" th:if="${consultar == 'si'}">
+											<h3 id="ancla0" class="ma-panel-title">Consultar</h3>
+										</div>
+										<form th:action="@{/insertarModificarHabilitacionMutua}" enctype="multipart/form-data"
+										 	  th:object="${habilitacionMutua}" id="habilitacionMutua" name="habilitacionMutua">
+											<input type="hidden" name="idHabilitacion"	id="idHabilitacion" th:field="*{idHabilitacion}" />
+											<input type="hidden" name="cdhabil"			id="cdhabil" th:field="*{cdhabil}" />
+											<div class="panel-body">
+
+												<!-- Consultar -->
+												<div class="panel-info container" th:if="${consultar == 'si'}">
+													<div class="row">
+														<div>
+															<div class="form-group">
+																<a th:href="@{consultaHabilitacion}" class="btn btn-primary">Volver</a>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- Consultar -->
+
+												<!-- Añadir o Editar -->
+												<div class="panel-info container" th:unless="${consultar == 'si'}">
+													<!-- consultar = no -->
+													<div class="row">
+														<div class="col-md-4">DATOS MUFACE</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text"	th:field="*{cdidmuf}" id="cdidmuf" name="cdidmuf" maxlength="9" required/> 
+																<label for="cdidmuf">NIF Hab./Oficina Pagadora: *</label> 
+																<small th:if="${#fields.hasErrors('cdidmuf')}" th:errors="*{cdidmuf}" class="form-text text-danger"></small>
+															</div>
+														</div>
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{cdorgmuf}" id="cdorgmuf" name="cdorgmuf"	maxlength="9" /> 
+																<label for="cdorgmuf">Cod. Organismo: </label> 
+																<small th:if="${#fields.hasErrors('cdorgmuf')}"	th:errors="*{cdorgmuf}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{cdordmuf}" id="cdorgmuf" name="cdordmuf"	maxlength="9" /> 
+																<label for="cdordmuf">Cod.	Ordenante: </label> 
+																<small th:if="${#fields.hasErrors('cdordmuf')}"	th:errors="*{cdordmuf}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">DATOS ISFASS</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<select id="cdistipadm" name="cdistipadm" th:field="*{cdistipadm}" class="user-form-control">
+																	<option value="A">A-ADMINISTRACIÓN AUTONÓMICA</option>
+																	<option value="C">C-ADMINISTRACIÓN DEL ESTADO</option>
+																	<option value="L">L-ADMINISTRACIÓN LOCAL</option>
+																	<option value="X">X-OTROS ENTES DEL SECTOR PÚBLICO</option>
+																</select> 
+																<label for="cdistipadm">Tipo de Admon: </label> 
+																<small th:if="${#fields.hasErrors('cdistipadm')}" th:errors="*{cdistipadm}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">DATOS Retenedor y ordenante.	Sin tablas de ID's:</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{dsisretap1}" id="dsisretap1"	name="dsisretap1" maxlength="25" /> 
+																<label for="dsisretap1">Apellido 1(Ret): </label> 
+																<small th:if="${#fields.hasErrors('dsisretap1')}" th:errors="*{dsisretap1}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{dsisretap2}" id="dsisretap2"	name="dsisretap2" maxlength="25" /> 
+																<label for="dsisretap2">Apellido 2(Ret): </label> 
+																<small th:if="${#fields.hasErrors('dsisretap2')}" th:errors="*{dsisretap2}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text"	th:field="*{dsisretnom}" id="dsisretnom" name="dsisretnom" maxlength="20" /> 
+																<label for="dsisretnom">Nombre(Ret): </label> 
+																<small th:if="${#fields.hasErrors('dsisretnom')}" th:errors="*{dsisretnom}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text"	th:field="*{dsisordap1}" id="dsisordap1" name="dsisordap1" maxlength="25" /> 
+																<label for="dsisordap1">Apellido 1(Ord): </label> 
+																<small th:if="${#fields.hasErrors('dsisordap1')}" th:errors="*{dsisordap1}" class="form-text text-danger"></small>
+															</div>
+														</div>
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{dsisordap2}" id="dsisordap2"	name="dsisordap2" maxlength="25" /> 
+																<label for="dsisordap2">Apellido 2 (Ord): </label> 
+																<small th:if="${#fields.hasErrors('dsisordap2')}" th:errors="*{dsisordap2}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{dsisordnom}" id="dsisordnom"	name="dsisordnom" maxlength="20" /> 
+																<label for="dsisordnom">Nombre (Ord): </label> 
+																<small th:if="${#fields.hasErrors('dsisordnom')}" th:errors="*{dsisordnom}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">DATOS MUJEGU</div>
+													</div>
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{cdmujorg}" id="cdmujorg" name="cdmujorg"	maxlength="2" /> 
+																<label for="cdmujorg">Organismo:</label> 
+																<small th:if="${#fields.hasErrors('cdmujorg')}"	th:errors="*{cdmujorg}" class="form-text text-danger"></small>
+																<input class="material-inputs" type="text" th:field="*{dsmujorg}" id="dsmujorg" name="dsmujorg"	maxlength="42" /> 
+																<small th:if="${#fields.hasErrors('dsmujorg')}"	th:errors="*{dsmujorg}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{cdmujger}" id="cdmujger" name="cdmujger"	maxlength="2" /> 
+																<label for="cdmujger">Habilitacion o Gerencia: </label> 
+																<small th:if="${#fields.hasErrors('cdmujger')}"	th:errors="*{cdmujger}" class="form-text text-danger"></small>
+																<input class="material-inputs" type="text" th:field="*{dsmujger}" id="dsmujger" name="dsmujger"	maxlength="20" /> 
+																<small th:if="${#fields.hasErrors('dsmujger')}"	th:errors="*{dsmujger}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">DATOS RGSS</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{cdautoriz}" id="cdautoriz" name="cdautoriz"	maxlength="" /> 
+																<label for="cdautoriz">Número de Autorización:</label> 
+																<small th:if="${#fields.hasErrors('cdautoriz')}" th:errors="*{cdautoriz}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{feautoriz}" id="feautoriz" name="feautoriz" maxlength="" /> 
+																<label for="feautoriz">Fecha:</label> 
+																<small th:if="${#fields.hasErrors('feautoriz')}" th:errors="*{feautoriz}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{dsautoriz}" id="dsautoriz" name="dsautoriz" maxlength="20" /> 
+																<label for="dsautoriz">Titular de Autorización: </label> 
+																<small th:if="${#fields.hasErrors('dsautoriz')}" th:errors="*{dsautoriz}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<label> Texto para el TC 1: </label>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{txtc11}" id="txtc11" name="txtc11"	maxlength="18" /> 
+																<label for="txtc11"> Línea	1: </label> 
+																<small th:if="${#fields.hasErrors('txtc11')}" th:errors="*{txtc11}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{txtc12}" id="txtc12" name="txtc12" maxlength="18" /> 
+																<label for="txtc12">Línea 2:</label> 
+																<small th:if="${#fields.hasErrors('txtc12')}" th:errors="*{txtc12}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-md-4">
+															<div class="form-group">
+																<label> </label>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{txtc13}" id="txtc13" name="txtc13" maxlength="18" /> 
+																<label for="txtc13"> Línea 3:</label> 
+																<small th:if="${#fields.hasErrors('txtc13')}" th:errors="*{txtc13}" class="form-text text-danger"></small>
+															</div>
+														</div>
+
+														<div class="col-md-4">
+															<div class="form-group">
+																<input class="material-inputs" type="text" th:field="*{txtc14}" id="txtc14" name="txtc14" maxlength="18" /> 
+																<label for="txtc14">Línea 4:</label> 
+																<small th:if="${#fields.hasErrors('txtc14')}" th:errors="*{txtc14}" class="form-text text-danger"></small>
+															</div>
+														</div>
+													</div>
+
+													<!-- Si hay error al insertar una habilitacion mutua que ya existe -->
+													<div class="col-md-8" th:if="${mensajeError != null}">
+														<div class="form-group">
+															<p th:text="${mensajeError}" class="form-text text-danger"></p>
+														</div>
+													</div>
+													<br/>
+													<p>* Campo obligatorio</p>
+													<br/>
+
+													<div class="row">
+														<div class="col-md-4 text-center" th:if="${editar == 'si' || aniadir == 'si'}">
+															<input type="submit" class="btn btn-primary"> <a th:href="@{consultaHabilitacion}" class="btn btn-primary">Volver</a>
+														</div>
+													</div>
+												</div>
+												<!-- Añadir o Editar -->
+										</form>
+									</div>
+									<br/>
+									<div class="panel" th:if="${mostrarTabla == 'si'}">
+										<div class="panel-body">
+											<div class="panel-info container">
+												<div class="row">
+													<div class="table-responsive">
+														<table class="ma-table table">
+															<thead>
+																<tr>
+																	<th>NIF Hab./Oficina Pagadora::</th>
+																	<th>Cod. Organismo:</th>
+																	<th>Cod. Ordenante:</th>
+																	<th>Tipo de Admon:</th>
+																	<th>Apellido 1(Ret)</th>
+																	<th>Apellido 2(Ret)</th>
+																	<th>Nombre(Ret):</th>
+																	<th>Apellido 1(Ord)</th>
+																	<th>Apellido 2(Ord)</th>
+																	<th>Nombre(Ord):</th>
+																	<th>Organismo:</th>
+																	<th>Habilitacion o Gerencia:</th>
+																	<th>Numero de Autorización:</th>
+																	<th>Fecha:</th>
+																	<th>Titular de Autorización:</th>
+																	<th>Texto para el TC 1: Linea 1:</th>
+																	<th>Linea 2:</th>
+																	<th>Linea 3:</th>
+																	<th>Linea 4:</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="h:${habilitacionNuevaModificada}">
+																	<td th:text="${h.cdidmuf}"></td>
+																	<td th:text="${h.cdorgmuf}"></td>
+																	<td th:text="${h.cdordmuf}"></td>
+																	<td th:text="${h.cdistipadm}"></td>
+																	<td th:text="${h.dsisretap1}"></td>
+																	<td th:text="${h.dsisretap2}"></td>
+																	<td th:text="${h.dsisretnom}"></td>
+																	<td th:text="${h.dsisordap1}"></td>
+																	<td th:text="${h.dsisordap2}"></td>
+																	<td th:text="${h.dsisordnom}"></td>
+																	<td th:text="${h.cdmujorg} + ' ' + ${h.dsmujorg}"></td>
+																	<td th:text="${h.cdmujger} + ' ' + ${h.dsmujger}"></td>
+																	<td th:text="${h.cdautoriz}"></td>
+																	<td th:text="${h.feautoriz}"></td>
+																	<td th:text="${h.dsautoriz}"></td>
+																	<td th:text="${h.txtc11}"></td>
+																	<td th:text="${h.txtc12}"></td>
+																	<td th:text="${h.txtc13}"></td>
+																	<td th:text="${h.txtc14}"></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- main cierra col-md-9 contenido -->
+		</div>
+		<!-- main cierra row-offcanvas-left -->
+	</div>
+	<!-- main cierra col-md-12 main-->
+	</div>
+	<!-- cierra row -->
+
+	<!-- Cierre containeer -->
+
+	<!-- Footer -->
+	<div th:replace="Footer.html :: pie"></div>
+	<!-- End Footer -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script th:src="@{/js/script.js}"></script>
+
+</body>
+
+</html>

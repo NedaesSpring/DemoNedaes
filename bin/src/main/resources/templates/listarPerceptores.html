@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Getting Started: Serving Web Conten</title></head>
+<body>
+    <p th:text="'Hola ' + ${cabecera} + '!'" />
+    
+    
+    <table>
+    	<th:block th:each="per : ${perceptores}">
+    		<tr>
+    			<td th:text="${per.idPerceptor}"> </td>
+    			<td th:text="${per.nombre}"> </td>
+    			<td th:text="${per.apellidos}"> </td>
+    			
+    		</tr>
+    	</th:block>
+    		
+    </table>
+    	
+</body>
+</html>
